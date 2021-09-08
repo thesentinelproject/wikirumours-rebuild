@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% block extra_header%}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="{% static 'jquery-ui/jquery-ui.js'  %}"></script>
+<script type="text/javascript" src="{% static 'jQAllRangeSliders-min.js'  %}"></script>
+<link type="text/css" rel="stylesheet" href="{% static 'classic-min.css'  %}"/>
+
+<script src="https://momentjs.com/downloads/moment.min.js"></script>
+<script>
+    var mapsApiKey = '{{GOOGLE_MAPS_KEY}}';
+    var location_data = {{ location_array|safe}};
+    startDateString = "{{slider_start_date}}";
+    endDateString = "{{slider_end_date}}";
+    sliderStartDate = moment("{{slider_start_date}}", "YYYY-MM-DD");
+    sliderEndDate = moment("{{slider_end_date}}", "YYYY-MM-DD");
+</script>
+<script type="text/javascript" src="{% static 'js/view_report.js' %}"></script>
+
+{% endblock %}
+
+{% block main_project %}
+{% include 'report/common_view_report.html' %}
+{% endblock %}

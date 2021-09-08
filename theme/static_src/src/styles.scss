@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1{
+    @apply text-2xl md:text-4xl font-bold  text-center;
+  }
+  h2{
+    @apply text-xl md:text-2xl font-bold  text-center;
+  }
+}
+
+@layer components {
+  .wr-table-cell-label {
+    @apply table-cell text-xl font-semibold text-base m-4 p-4;
+  }
+  .wr-table-cell-description {
+    @apply table-cell text-lg  m-4 p-4;
+  }
+  .wr-table-cell-label-sm {
+    @apply font-semibold text-base p-2 m-1;
+  }
+  .wr-table-cell-description-sm {
+    @apply text-sm p-2;
+  }
+  .action-button{
+    @apply bg-wr-blue hover:bg-wr-blue-dark text-white  px-4 py-2 rounded cursor-pointer;
+  }
+  .action-button-snd{
+    @apply hover:bg-wr-blue hover:text-white text-wr-blue px-4 py-2 rounded cursor-pointer;
+  }
+  .action-button-ter{
+    @apply hover:bg-wr-grey-dark border dark:bg-wr-grey-dark dark:text-white dark:hover:bg-white dark:hover:text-black
+     border-wr-grey-dark hover:text-white text-wr-grey px-4 py-2 rounded cursor-pointer;
+  }
+  .map-wrapper{
+    @apply h-1/2 w-1/2;
+  }
+  .report-text{
+    @apply text-wr-grey md:mt-2 text-base md:px-4 py-2 md:mb-1;
+  }
+  .report-title{
+    @apply  text-xl md:text-2xl font-bold p-2;
+  }
+  .report-tag{
+    @apply  inline-block bg-gray-700 rounded-full px-2 py-1 md:px-4 md:py-2 text-sm font-semibold text-white mr-2 mb-2;
+  }
+  .wr-report-table-cell-header {
+    @apply table-cell border-b dark:border-white border-wr-grey-dark text-base md:text-lg font-semibold p-2 m-1;
+  }
+  .wr-report-table-cell-row {
+    @apply table-cell border-b dark:border-white border-wr-grey-dark md:text-base text-sm p-2 pl-4 pr-4 m-1 text-center align-middle;
+  }
+  .wr-comment-tag {
+    @apply dark:text-white text-wr-grey-dark font-medium p-1 border dark:border-white border-wr-grey-dark text-center w-16 rounded-lg mb-2 text-xs inline-block;
+  }
+  .wr-flagged-tag {
+    @apply dark:text-white text-wr-grey-dark font-medium p-1 border dark:border-white border-wr-grey-dark text-center w-24 rounded-lg mb-2 text-xs inline-block;
+  }
+  .wr-input-container {
+    @apply mx-auto md:w-192 w-auto;
+  }
+  .wr-content {
+    @apply bg-white dark:bg-wr-grey;
+  }
+  .wr-statistic-chunk {
+    @apply mx-4 mt-2 md:flex md:w-1/2 md:flex-col border rounded dark:text-white;
+  }
+  .wr-statistic-half-width-chunk {
+    @apply mx-4 mt-2 md:flex md:w-full md:flex-col border rounded dark:text-white;
+  }
+  .wr-statistic-chunk-header {
+    @apply md:flex md:flex-row w-full justify-start bg-gray-100 dark:bg-wr-grey-dark;
+  }
+  .blockquote-open {
+    background-image: url('/static/blockquote_open.png');
+    background-position: top left;
+    background-repeat: no-repeat;
+    text-indent: 50px;
+  }.blockquote-close {
+    background-image: url('/static/blockquote_close.png');
+    background-position: bottom right;
+    background-repeat: no-repeat;
+  }
+  .td a{
+   display: block;
+  }
+  .hamburger-menu-item{
+    @apply mx-4 my-1 p-2
+  }
+  .blue-links a {
+    @apply text-wr-blue hover:underline;
+  }
+}

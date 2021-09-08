@@ -1,0 +1,13 @@
+<html>
+<p>Hello, {{user.full_name}}</p>
+<p>You have the following overdue reports -</p>
+<p>You may view all reports under the 'My Tasks' section of the site -</p>
+<br />
+
+{% for report in overdue_reports %}
+<div>
+    <a href="http://{{report.domain.domain}}{{report.absolute_url}}">{{report.title}}</a>
+</div>
+{% endfor %}
+
+</html>

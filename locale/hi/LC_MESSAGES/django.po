@@ -1,0 +1,503 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-16 12:24+0530\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: blog/templates/blog/blogs_list.html:7
+msgid "List of Blogs"
+msgstr "लेखों की सूची"
+
+#: report/forms.py:14 report/templates/report/add_title.html:11
+msgid "Title"
+msgstr "शीर्षक"
+
+#: report/forms.py:25
+msgid "Occurred on"
+msgstr "पर हुआ"
+
+#: report/forms.py:40 report/forms.py:85 report/forms.py:151
+msgid "country"
+msgstr "देश"
+
+#: report/forms.py:41 report/forms.py:86 report/forms.py:152
+msgid "location"
+msgstr "स्थान"
+
+#: report/forms.py:60 report/forms.py:126
+#: report/templates/report/my_activity.html:91
+#: report/templates/report/sightings.html:87
+msgid "Heard on"
+msgstr "पर सुना"
+
+#: report/forms.py:83 report/forms.py:149
+#: report/templates/report/my_activity.html:88
+#: report/templates/report/sightings.html:84
+msgid "Source"
+msgstr "स्रोत"
+
+#: report/forms.py:84 report/forms.py:150
+#: report/templates/report/my_activity.html:94
+#: report/templates/report/sightings.html:90
+msgid "Overheard at"
+msgstr "सुन लिया गया"
+
+#: report/forms.py:87 report/forms.py:153
+msgid "reported via"
+msgstr "के माध्यम से सूचना दी"
+
+#: report/forms.py:202
+msgid "assigned to"
+msgstr "को सौंपना"
+
+#: report/forms.py:203 report/templates/report/common_view_report.html:98
+#: report/templates/report/my_activity.html:27
+#: report/templates/report/my_task.html:19
+#: report/templates/report/report_list.html:61
+msgid "Priority"
+msgstr "प्राथमिकता"
+
+#: report/forms.py:204
+msgid "status"
+msgstr "स्थिति"
+
+#: report/forms.py:205
+msgid "resolution"
+msgstr "संकल्प"
+
+#: report/templates/report/add_report.html:13
+#: report/templates/report/add_title.html:16
+#: report/templates/report/matching_report.html:7 theme/templates/base.html:110
+msgid "Add Report"
+msgstr "संदेश जोड़ें"
+
+#: report/templates/report/add_report.html:16
+msgid "Add information about report"
+msgstr "संदेश की सुनवाई के बारे में अधिक जानकारी जोड़ें"
+
+#: report/templates/report/add_report.html:45
+msgid "Add more information about report hearing"
+msgstr "संदेश की सुनवाई के बारे में अधिक जानकारी जोड़ें"
+
+#: report/templates/report/add_report.html:71
+#: report/templates/report/edit_report.html:69
+msgid "Cancel"
+msgstr "रद्द करें"
+
+#: report/templates/report/add_report.html:75
+#: report/templates/report/edit_report.html:73
+msgid "Submit"
+msgstr "जमा करें"
+
+#: report/templates/report/add_title.html:8
+msgid "Get started with adding Report"
+msgstr "रिपोर्ट जोड़ने के साथ आरंभ करें"
+
+#: report/templates/report/add_title.html:14
+msgid "Enter title of report"
+msgstr "रिपोर्ट का शीर्षक दर्ज करें"
+
+#: report/templates/report/comments.html:66
+msgid "Add a comment"
+msgstr "टिप्पणी जोड़ें"
+
+#: report/templates/report/comments.html:68
+msgid "Post"
+msgstr "संपादित करें"
+
+#: report/templates/report/common_view_report.html:20
+msgid "You have reported this"
+msgstr "आपने इसकी सूचना दी है"
+
+#: report/templates/report/common_view_report.html:128
+msgid "comments"
+msgstr "टिप्पणियाँ"
+
+#: report/templates/report/common_view_report.html:138
+msgid "sightings"
+msgstr " द्रष्टव्य "
+
+#: report/templates/report/common_view_report.html:146
+msgid "I have also Heard"
+msgstr ""
+
+#: report/templates/report/common_view_report.html:153
+#: report/templates/report/common_view_report.html:160
+msgid "Edit"
+msgstr "संपादित करें"
+
+#: report/templates/report/edit_report.html:18
+msgid "Edit Report"
+msgstr "संदेश संपादित करें"
+
+#: report/templates/report/edit_report.html:44
+msgid "Add more information about report Sighting"
+msgstr "रिपोर्ट साइटिंग के बारे में अधिक जानकारी जोड़ें"
+
+#: report/templates/report/edit_sighting.html:14
+#, fuzzy
+#| msgid "Add sighting for"
+msgid "Edit sighting for"
+msgstr "के लिए द्रष्टव्य जोड़ें"
+
+#: report/templates/report/matching_report.html:20
+#, fuzzy
+#| msgid "Recent reports"
+msgid "Matched reports"
+msgstr "ताज़ा संदेश"
+
+#: report/templates/report/my_activity.html:11 theme/templates/base.html:102
+msgid "My Activity"
+msgstr "मेरी गतिविधि"
+
+#: report/templates/report/my_activity.html:14
+msgid "Reports added by you"
+msgstr "आपके द्वारा जोड़ी गई रिपोर्ट"
+
+#: report/templates/report/my_activity.html:24
+#: report/templates/report/my_activity.html:85
+#: report/templates/report/my_task.html:16
+#: report/templates/report/report_list.html:57
+msgid "Report"
+msgstr "संदेश"
+
+#: report/templates/report/my_activity.html:30
+#: report/templates/report/report_list.html:64
+#, fuzzy
+#| msgid "status"
+msgid "Status"
+msgstr "स्थिति"
+
+#: report/templates/report/my_activity.html:33
+#: report/templates/report/my_task.html:22
+#: report/templates/report/report_list.html:70
+msgid "Updated"
+msgstr "अद्यतन"
+
+#: report/templates/report/my_activity.html:36
+#: report/templates/report/my_task.html:25
+#: report/templates/report/report_list.html:73
+msgid "Occurred"
+msgstr "घटित हुआ"
+
+#: report/templates/report/my_activity.html:77
+msgid "Sightings added by you"
+msgstr ""
+
+#: report/templates/report/my_activity.html:123
+msgid "You have not yet done any activity"
+msgstr "आपने अभी तक कोई गतिविधि नहीं की है"
+
+#: report/templates/report/my_task.html:37
+msgid "None"
+msgstr ""
+
+#: report/templates/report/my_task.html:69
+#, fuzzy
+#| msgid "assigned to"
+msgid "No task assigned "
+msgstr "को सौंपना"
+
+#: report/templates/report/new_hearing.html:13
+msgid "Add sighting for"
+msgstr "के लिए द्रष्टव्य जोड़ें"
+
+#: report/templates/report/report_list.html:11 theme/templates/base.html:99
+msgid "Reports"
+msgstr "संदेश"
+
+#: report/templates/report/report_list.html:25
+#: report/templates/report/report_list.html:27
+msgid "Search"
+msgstr "खोज"
+
+#: report/templates/report/report_list.html:38
+msgid "Sort by"
+msgstr "इसके अनुसार क्रमबद्ध करें"
+
+#: report/templates/report/report_list.html:41
+msgid "Recent Report"
+msgstr "हाल ही की रिपोर्ट"
+
+#: report/templates/report/report_list.html:45
+msgid "Most Common Report"
+msgstr "सबसे आम रिपोर्ट"
+
+#: report/templates/report/report_list.html:67
+#, fuzzy
+#| msgid "sightings"
+msgid "Sightings"
+msgstr " द्रष्टव्य "
+
+#: report/templates/report/report_list.html:124
+#: report/templates/report/sightings.html:125
+msgid "Page"
+msgstr "पृष्ठ"
+
+#: report/templates/report/report_list.html:124
+#: report/templates/report/sightings.html:125
+msgid "of"
+msgstr "का"
+
+#: report/templates/report/report_list.html:135
+msgid "No reports present"
+msgstr "कोई संदेश पेश नहीं की"
+
+#: report/templates/report/sightings.html:65
+msgid "Show sightings as"
+msgstr "के रूप में देखे"
+
+#: report/templates/report/sightings.html:68
+msgid "Table"
+msgstr "टेबल"
+
+#: report/templates/report/sightings.html:72
+msgid "Map"
+msgstr "नक्शा"
+
+#: report/templates/report/sightings.html:81
+#, fuzzy
+#| msgid "email address"
+msgid "Address"
+msgstr "डाक पता"
+
+#: report/views.py:343
+msgid "Title of report cannot be empty"
+msgstr "रिपोर्ट का शीर्षक खाली नहीं हो सकता"
+
+#: theme/templates/base.html:58 theme/templates/base.html:117
+msgid "Blogs"
+msgstr "लेख"
+
+#: theme/templates/base.html:61 users/templates/users/login.html:39
+msgid "Login"
+msgstr "लॉग इन करें"
+
+#: theme/templates/base.html:71
+msgid "User profile"
+msgstr "उपयोगकर्ता प्रोफ़ाइल"
+
+#: theme/templates/base.html:75
+msgid "Logout"
+msgstr "लॉग आउट"
+
+#: theme/templates/base.html:106
+msgid "My Tasks"
+msgstr "मेरे कार्य"
+
+#: theme/templates/base.html:114
+msgid "Admin Site"
+msgstr "व्यवस्थापक साइट"
+
+#: users/authentication.py:14
+msgid "No credentials provided."
+msgstr ""
+
+#: users/authentication.py:26
+msgid "Invalid username/password/api-key"
+msgstr ""
+
+#: users/authentication.py:30
+msgid "User inactive or deleted."
+msgstr ""
+
+#: users/forms.py:19 users/forms.py:55
+#: users/templates/users/user_profile.html:73
+#: users/templates/users/user_profile.html:117
+msgid "Username"
+msgstr "उपयोगकर्ता नाम"
+
+#: users/forms.py:28 users/forms.py:85
+msgid "Password"
+msgstr "कुंजिका"
+
+#: users/forms.py:35 users/forms.py:144
+#: users/templates/users/user_profile.html:33
+#: users/templates/users/user_profile.html:94
+msgid "First Name"
+msgstr "पहला नाम"
+
+#: users/forms.py:45 users/forms.py:154
+#: users/templates/users/user_profile.html:41
+#: users/templates/users/user_profile.html:98
+msgid "Last Name"
+msgstr "उपनाम"
+
+#: users/forms.py:65 users/forms.py:110
+#: users/templates/users/user_profile.html:49
+#: users/templates/users/user_profile.html:104
+msgid "Email"
+msgstr "डाक पता"
+
+#: users/forms.py:75 users/forms.py:164
+#: users/templates/users/user_profile.html:57
+#: users/templates/users/user_profile.html:108
+msgid "Phone Number"
+msgstr "फ़ोन नंबर"
+
+#: users/models.py:41
+msgid "email address"
+msgstr "डाक पता"
+
+#: users/models.py:44
+msgid "A user with that email already exists."
+msgstr ""
+
+#: users/models.py:52
+msgid ""
+"If this is set to true, your name will not be displayed on reports submitted "
+"by you."
+msgstr ""
+
+#: users/templates/users/edit_profile.html:16
+msgid "Edit Profile"
+msgstr "संपादित करे"
+
+#: users/templates/users/edit_profile.html:45
+msgid "Save"
+msgstr ""
+
+#: users/templates/users/email_sent.html:9
+msgid "Verification mail has been sent to your email-Id"
+msgstr "आपके ईमेल-आईडी पर सत्यापन मेल भेजा गया है"
+
+#: users/templates/users/forgot_password.html:35
+msgid "Send link to reset password"
+msgstr "पासवर्ड रीसेट करने के लिए लिंक भेजें"
+
+#: users/templates/users/login.html:12
+msgid "Log in to WiKiRumours"
+msgstr "विकीरयूमर्स  में लॉग इन करें"
+
+#: users/templates/users/login.html:45
+msgid "Using first time?"
+msgstr "पहली बार उपयोग कर रहे हैं?"
+
+#: users/templates/users/login.html:47
+msgid "Sign up"
+msgstr "साइन अप करें"
+
+#: users/templates/users/login.html:53
+msgid "Forgot password?"
+msgstr "कुंजिका भूल गए?"
+
+#: users/templates/users/reset_password.html:36
+#, fuzzy
+#| msgid "Password"
+msgid " Reset password"
+msgstr "कुंजिका"
+
+#: users/templates/users/sign_up.html:10
+msgid "Take a moment to register now"
+msgstr "अभी रजिस्टर करने के लिए थोड़ा समय निकालें"
+
+#: users/templates/users/sign_up.html:24
+msgid "Next"
+msgstr "आगे बढ़ें"
+
+#: users/templates/users/user_profile.html:24
+msgid "Profile Details"
+msgstr "प्रोफ़ाइल विवरण"
+
+#: users/templates/users/user_profile.html:65
+#: users/templates/users/user_profile.html:112
+msgid "Role"
+msgstr "भूमिका"
+
+#: users/templates/users/user_profile.html:81
+msgid "Is user anonymous?"
+msgstr "क्या उपयोगकर्ता अनाम है?"
+
+#: users/templates/users/user_profile.html:122
+#, fuzzy
+#| msgid "Is user anonymous?"
+msgid "Is user anonymous"
+msgstr "क्या उपयोगकर्ता अनाम है?"
+
+#: users/templates/users/user_profile.html:134
+msgid "Edit Details"
+msgstr "विवरण संपादित करें"
+
+#~ msgid "New Report"
+#~ msgstr "नया संदेश"
+
+#~ msgid "My Report"
+#~ msgstr "संदेश"
+
+#~ msgid "My Sightings"
+#~ msgstr " द्रष्टव्य "
+
+#~ msgid "showing all Sightings"
+#~ msgstr "सभी द्रष्टव्य दिखा रहा है"
+
+#~| msgid "Overheard at"
+#~ msgid "overheard at"
+#~ msgstr "सुन लिया गया"
+
+#, fuzzy
+#~| msgid "Source"
+#~ msgid "source"
+#~ msgstr "स्रोत"
+
+#~ msgid "priority"
+#~ msgstr "प्राथमिकता"
+
+#~ msgid "title"
+#~ msgstr "शीर्षक"
+
+#, fuzzy
+#~ msgid "occured_on"
+#~ msgstr "पर हुआ"
+
+#~ msgid "Country"
+#~ msgstr "देश"
+
+#~ msgid "Occured in"
+#~ msgstr "पर हुआ"
+
+#~ msgid "Low"
+#~ msgstr "कम"
+
+#~ msgid "High"
+#~ msgstr "उच्च"
+
+#~ msgid "Very High"
+#~ msgstr "बहुत उच्च"
+
+#~ msgid "--"
+#~ msgstr "None"
+
+#~ msgid "email"
+#~ msgstr "ईमेल"
+
+#~ msgid "market"
+#~ msgstr "बाजार"
+
+#~ msgid "overheard"
+#~ msgstr "सुन ली"
+
+#~ msgid "temple"
+#~ msgstr "मंदिर"
+
+#~ msgid "neighbourhood"
+#~ msgstr "अड़ोस - पड़ोस"
+
+#~ msgid "workplace"
+#~ msgstr "कार्यस्थल"
+
+#~ msgid "street"
+#~ msgstr "सड़क"

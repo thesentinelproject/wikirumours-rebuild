@@ -1,0 +1,98 @@
+<html>
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% block extra_header%}
+{% endblock%}
+{% block main_project %}
+<div class=" h-full w-full ">
+    <div class="md:mx-auto p-2 md:p-4 mt-4">
+        <div class="md:flex justify-center ">
+            <div class="md:flex mt-8 md:w-7/8 mb-4 items-start">
+                <div class="table my-4 px-1 md:px-4 py-2 md:py-6">
+                    <div class="table-row-group block">
+                        <div class="table-row ">
+                            <div class="wr-table-cell-label">
+                                {% trans 'Name' %}
+                            </div>
+                            <div class="wr-table-cell-description">
+                                {{user.first_name|default_if_none:''}} {{user.last_name|default_if_none:''}}
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div class="wr-table-cell-label">
+                                {% trans 'Role' %}
+                            </div>
+                            <div class="wr-table-cell-description">
+                                {{user.role}}
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div class="wr-table-cell-label">
+                                {% trans 'Location' %}
+                            </div>
+                            <div class="wr-table-cell-description">
+                                {{user.country}}
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div class="wr-table-cell-label">
+                                {% trans 'Activity' %}
+                            </div>
+                            <div class="wr-table-cell-description">
+                                <div class="md:flex p-4 items-center dark:text-white space-y-1 md:space-x-2">
+                                    <button class="action-button mt-1"
+                                            onclick="window.location='{% url 'view_user' username=user.username  %}?tab=reports'">
+                                        {{number_of_reports}} reports
+                                    </button>
+                                    <button class="action-button"
+                                            onclick="window.location='{% url 'view_user' username=user.username %}?tab=sightings'">
+                                        {{number_of_sightings}} sightings
+                                    </button>
+                                    <button class="action-button"
+                                            onclick="window.location='{% url 'view_user' username=user.username %}?tab=comments'">
+                                        {{number_of_comments}} comments
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center md:text-right">
+                    <a class="action-button" href="{% url 'chat' username=user.username %}">Send message</a>
+                </div>
+            </div>
+        </div>
+
+        {% if reports and tab == 'reports' %}
+        <div class="text-xl md:text-2xl dark:text-white text-wr-grey mb-4 py-2">
+            {% trans 'Reports added by user' %}
+        </div>
+        {% with reports=reports page_obj=page_obj page_query="reports_page"%}
+        {% include 'report/report_table.html' %}
+        {% endwith %}
+        {% endif %}
+
+        {% if sightings and tab == 'sightings' %}
+        <div class="text-xl md:text-2xl dark:text-white text-wr-grey mb-4 py-2">
+            {% trans 'Sightings added by user' %}
+        </div>
+        {% with sightings=sightings page_obj=page_obj page_query="sightings_page"%}
+        {% include 'report/sighting_table.html' %}
+        {% endwith %}
+        {% endif %}
+
+        {% if comments and tab == 'comments' %}
+        <div class="text-xl md:text-2xl dark:text-white text-wr-grey mb-4 py-2">
+            {% trans 'Comments made by user' %}
+        </div>
+        {% with comments=comments page_obj=page_obj page_query="comments_page"%}
+        {% include 'report/comment_table.html' %}
+        {% endwith %}
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}
+</html>

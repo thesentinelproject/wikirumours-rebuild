@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block extra_header%}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+{% endblock %}
+
+{% block main_project %}
+
+<div class="md:flex dark:text-white">
+    <div class="hidden md:flex flex-col h-auto md:h-screen md:w-2/12 overflow-y-auto">
+        <div class="text-center p-2">Choose a user to message:</div>
+        <div class="text-center p-2">
+            <select id="users"></select>
+        </div>
+
+        <div class="block text-lg font-bold text-center p-2">Previous Chats</div>
+        {% for chat in chats %}
+
+        <div class="flex flex-col">
+            <div class="flex flex-col w-5/6 bg-wr-grey-light dark:bg-wr-grey-dark p-2 rounded mx-auto my-2
+             cursor-pointer" onclick="window.location='{%url 'chat' username=chat.user.username%}'">
+                <div class="flex flex-row justify-between">
+                    <div class="mx-2 text-sm">
+                        {{chat.user.first_name}} {{chat.user.last_name}}
+                    </div>
+                    <div class="mx-2 text-sm"> {{chat.message.created_at |date:"d M Y"}}</div>
+                </div>
+                <div class="mx-2 mt-2 truncate"> {{chat.message.text}}</div>
+            </div>
+        </div>
+
+        {% empty %}
+        <div class="text-center p-2"> No previous chats</div>
+        {% endfor%}
+
+    </div>
+    {% if selected_user %}
+    <div class="flex flex-col h-screen ml-8 mr-8 md:w-8/12 rounded">
+        <div class="flex h-auto bg-wr-shadow dark:bg-wr-grey-dark rounded-md">
+            <div class="text-center font-bold text-lg mx-auto p-2 mt-4">
+                Messages with {{selected_user.first_name}} {{selected_user.last_name}}<br/>
+            </div>
+        </div>
+        <div class="flex flex-grow flex-col bg-wr-shadow dark:bg-wr-grey-dark overflow-y-auto">
+            {% for message in chat_messages %}
+
+            {% if message.to_user == request.user and message.text %}
+            <div class="flex  justify-start m-2 pl-4 pr-4">
+                <div class="bg-wr-grey-light dark:bg-wr-grey rounded-lg p-3">
+                    <div>{{message.text}}</div>
+                    <div class="text-sm">{{message.created_at |date}}</div>
+                </div>
+            </div>
+            {% elif message.text %}
+            <div class="flex  justify-end m-2 pl-4 pr-4">
+                <div class="bg-green-300 dark:bg-green-600 rounded-lg p-3">
+                    <div>{{message.text}}</div>
+                    <div class="text-sm">{{message.created_at |date}}</div>
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            {% endfor %}
+        </div>
+
+        <div class="flex flex-col h-48 bg-wr-shadow dark:bg-wr-grey-dark overflow-y-auto mb-32">
+            <form class="p-4 mt-6 mp-6 mb-6 flex flex-col md:flex-row md:space-x-2 " method="post"
+                  action="{% url 'send_chat_message' username=selected_user.username %}">
+                {%csrf_token%}
+                <textarea required name="message_text" placeholder="{% trans 'Type your message here' %}"
+                          class="w-full bg-wr-white dark:bg-wr-grey dark:text-white p-4 text-wr-grey-dark"></textarea>
+                <div class="text-center md:my-auto">
+                    <button type="submit" class="action-button pl-6 pr-6 mt-4 md:mt-0">
+                        {% trans 'Post' %}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+    {% endif %}
+
+    <div class="md:hidden flex flex-col h-auto md:h-screen md:w-2/12 overflow-y-auto">
+        <div class="text-center p-2">Choose a user to message:</div>
+        <div class="text-center p-2">
+            <select id="users-mobile"></select>
+        </div>
+
+        <div class="block text-lg font-bold text-center p-2">Previous Chats</div>
+        {% for chat in chats %}
+
+        <div class="flex flex-col">
+            <div class="flex flex-col w-5/6 bg-wr-grey-light dark:bg-wr-grey-dark p-2 rounded mx-auto my-2
+             cursor-pointer" onclick="window.location='{%url 'chat' username=chat.user.username%}'">
+                <div class="flex flex-row justify-between">
+                    <div class="mx-2 text-sm">
+                        {{chat.user.first_name}} {{chat.user.last_name}}
+                    </div>
+                    <div class="mx-2 text-sm"> {{chat.message.created_at |date:"d M Y"}}</div>
+                </div>
+                <div class="mx-2 mt-2 truncate"> {{chat.message.text}}</div>
+            </div>
+        </div>
+
+        {% empty %}
+        <div class="text-center p-2"> No previous chats</div>
+        {% endfor%}
+
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    var protocol = window.location.protocol;
+    var domain = window.location.hostname;
+    var port = window.location.port;
+    var search_url = `${protocol}//${domain}:${port? port : ""}` + "{% url 'search_user' %}"
+
+    $('#users,#users-mobile').select2({
+    width:"200px",
+    debug:true,
+    ajax: {
+    url: search_url,
+    dataType: 'json',
+    delay: 250,
+    data: function (params) {
+      return {
+        name: params.term, // search term
+        page: params.page
+      };
+    },
+    processResults: function (data, params) {
+      // parse the results into the format expected by Select2
+      // since we are using custom formatting functions we do not need to
+      // alter the remote JSON data, except to indicate that infinite
+      // scrolling can be used
+      params.page = params.page || 1;
+      return data;
+    },
+    cache: true
+  },
+  placeholder: 'Search for a user',
+  minimumInputLength: 1,
+});
+
+$('#users,#users-mobile').on('select2:select', function (e) {
+    var data = e.params.data;
+    var protocol = window.location.protocol;
+    var domain = window.location.hostname;
+    var port = window.location.port;
+    var chat_url = `${protocol}//${domain}:${port? port : ""}` + "{% url 'chat' %}"+data.id;
+    window.location.assign(chat_url)
+});
+
+});
+
+
+
+
+
+
+
+</script>
+{% endblock %}

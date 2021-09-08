@@ -1,0 +1,138 @@
+{% load static %}
+{% load i18n %}
+
+{% if reports%}
+<div class="md:justify-center bg-wr-shadow dark:bg-wr-grey-dark text-wr-grey-dark dark:text-white">
+    <div class="overflow-x-auto">
+
+        <table class="table-fixed border dark:border-white border-wr-grey w-full rounded">
+            <thead class="bg-wr-grey-light dark:bg-wr-grey-dark text-center ">
+            <tr>
+                <th class="w-1/3 wr-report-table-cell-header px-4 text-left">
+                    {% trans 'Report' %}
+                </th>
+                <th class="wr-report-table-cell-header hidden md:table-cell">
+                    {% trans 'Priority' %}
+                </th>
+                <th class="wr-report-table-cell-header">
+                    {% trans 'Status' %}
+                </th>
+                <th class="wr-report-table-cell-header hidden md:table-cell">
+                    {% trans 'Sightings' %}
+                </th>
+                <th class="wr-report-table-cell-header">
+                    {% trans 'Updated' %}
+                </th>
+                <th class="wr-report-table-cell-header">
+                    {% trans 'Occurred' %}
+                </th>
+            </tr>
+
+            </thead>
+            <tbody class="table-row-group">
+            {%for report in reports%}
+
+            <tr class="table-row">
+                <td class="w-1/3 wr-report-table-cell-row text-left">
+                    <a class="cursor-pointer line-clamp-4"
+                       href="{% url 'view_report' report_public_id=report.public_id%}">
+                        <span class="md:hidden uil {{ report.priority.icon }}"
+                              title="{{ report.priority.name }}"
+                              style="color: {{ report.priority.colour }}">
+                        </span>
+                        {% if show_overdue == True and report.is_overdue == True %}
+                        <span class="uil uil-hourglass"
+                              style="color: red"
+                              title="OVERDUE">
+                         </span>
+                        {% endif %}
+                        {{report.title }}
+                    </a>
+                </td>
+                <td class="wr-report-table-cell-row hidden md:table-cell">
+                    <a class=cursor-pointer" href="{% url 'view_report' report_public_id=report.public_id%}">
+                        {% if report.priority == None %}
+                        {% else %}
+                        {% trans report.priority.name %}
+                        {% endif %}
+                    </a>
+                </td>
+                <td class="wr-report-table-cell-row hidden md:table-cell">
+                    <a class="cursor-pointer" href="{% url 'view_report' report_public_id=report.public_id%}">
+                        {% if report.status == None %}
+                        {% else %}
+                        {% trans report.status.name %}
+                        {% endif %}
+                    </a>
+                </td>
+                <td class="wr-report-table-cell-row md:hidden">
+                    {% if report.status == None %}
+                    {% else %}
+                    <a class="cursor-pointer uil text-2xl {{ report.status.icon }}"
+                       title="{{ report.status.name }}"
+                       style="color: {{ report.status.colour }}"
+                       href="{% url 'view_report' report_public_id=report.public_id%}">
+                    </a>
+                    {% endif %}
+                </td>
+                <td class="wr-report-table-cell-row hidden md:table-cell">
+                    <a class="cursor-pointer" href="{% url 'view_report' report_public_id=report.public_id%}">
+                        {{report.sightings_count}}
+                    </a>
+                </td>
+                <td class="wr-report-table-cell-row">
+                    <a class="cursor-pointer" href="{% url 'view_report' report_public_id=report.public_id%}">
+                        {{report.updated_at|date }}
+                    </a>
+                </td>
+                <td class="wr-report-table-cell-row">
+                    <a class="cursor-pointer" href="{% url 'view_report' report_public_id=report.public_id%}">
+                        {{report.occurred_on|date }}
+                    </a>
+                </td>
+            </tr>
+
+            {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+<div class="md:hidden flex justify-center items-center md:px-8 mt-8 space-x-2">
+    <div class="flex mr-4 dark:text-white">
+        {% trans 'Page' %} {{ page_obj.number }} {% trans 'of' %} {{ page_obj.paginator.num_pages }}
+    </div>
+</div>
+<div class="flex justify-center md:justify-end items-center md:px-8 mt-8 space-x-2">
+    {% if page_obj.has_previous %}
+    <button class="action-button-ter"><a
+            href="?{{page_query}}=1{% for key, value in request.GET.items %}{% if key != page_query %}&{{ key }}={{ value }}{% endif %}{% endfor %}">First</a>
+    </button>
+    <button class="action-button-ter"><a
+            href="?{{page_query}}={{page_obj.previous_page_number}}{% for key, value in request.GET.items %}{% if key != page_query %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Previous</a>
+    </button>
+    {% endif %}
+
+    <span class="hidden md:flex mr-4 dark:text-white">
+                {% trans 'Page' %} {{ page_obj.number }} {% trans 'of' %} {{ page_obj.paginator.num_pages }}
+            </span>
+
+    {% if page_obj.has_next %}
+    <button class="action-button-ter"><a
+            href="?{{page_query}}={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != page_query %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a>
+    </button>
+    <button class="action-button-ter"><a
+            href="?{{page_query}}={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != page_query %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Last </a>
+    </button>
+    {% endif %}
+</div>
+
+{% else %}
+<div class="md:justify-center bg-wr-shadow dark:bg-wr-grey-dark">
+    <div class="text-center pt-16 pb-16 text-xl text-wr-grey dark:text-white font-medium mt-16 rounded">
+        {% trans 'No matching reports' %}
+    </div>
+</div>
+
+{% endif %}

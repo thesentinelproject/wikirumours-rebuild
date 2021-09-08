@@ -1,0 +1,28 @@
+<html>
+{% extends 'base_without_navbar.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block main_project %}
+<div class="bg-white h-full w-full">
+    <div class="mx-auto w-64 md:w-96">
+        <h2 class="pt-8 mb-8"> {% trans 'Take a moment to register now' %}</h2>
+        <div class="rounded px-4 md:px-8 py-12 mt-4 flex flex-col bg-wr-shadow">
+
+            <form action="{% url 'sign_up'%}" method="post" enctype="multipart/form-data" id="SignUpForm">
+                {%csrf_token%}
+                {%for field in form %}
+                <div class="text-xs md:text-md text-wr-grey font-bold mb-2">{{field.label}}</div>
+                <div class="mb-2"> {{field}}</div>
+                <div class="text-red-600 py-2 font-bold">{{field.errors}}</div>
+                {% endfor %}
+                <button class="action-button w-full mt-8" type="submit">
+                    {% trans 'Next' %}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+</html>

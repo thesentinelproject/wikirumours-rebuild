@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block main_project %}
+<div class="wr-input-container">
+    <div class="text-2xl md:text-4xl mt-4 font-bold  text-center text-wr-blue">
+        {% trans 'Edit Profile' %}
+    </div>
+        <div class="rounded px-8 md:px-12 py-8 md:py-12 mt-8 flex flex-col bg-wr-shadow dark:bg-wr-grey-dark">
+        <form method="post" action="{% url 'update_profile'%}" enctype="multipart/form-data" id="UpdateUser">
+                {%csrf_token%}
+
+                {%for field in user_form %}
+                {% if field.help_text %}
+                <div class="flex flex-row items-center ">
+                    <div class="text-xs md:text-md dark:text-white text-wr-grey font-bold px-1">{{field.label}}</div>
+                    <div class="text-xs dark:text-white text-wr-grey">( {{field.help_text}} )</div>
+
+                </div>
+                {% else %}
+
+                <div class="text-xs md:text-md dark:text-white text-wr-grey font-bold mb-2">{{field.label}}</div>
+
+                {% endif %}
+
+                {{field}}
+                <div class="text-red-600 py-5 md:font-extrabold">{{field.errors}}</div>
+                {% endfor %}
+
+                <div class="flex">
+                    <button class="mx-auto action-button"
+                            type="submit"
+                    >
+                        {% trans 'Save' %}
+                    </button>
+                </div>
+
+        </form>
+    </div>
+    </div>
+</div>
+{% endblock %}

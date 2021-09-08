@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{%load static%}
+{% load i18n%}
+
+{% block main_project %}
+<div class="h-full w-full">
+    {% if reports or sightings %}
+    <div class="text-2xl md:text-4xl mt-4 font-bold  text-center text-wr-blue">{% trans 'My Activity' %}</div>
+    {% endif %}
+    {% if watchlisted_reports %}
+    <div class="text-xl md:text-2xl dark:text-white text-wr-grey px-4 mt-4 py-2">{% trans 'Watchlisted reports' %}
+    </div>
+    <div class="md:mx-auto p-2 md:p-4 mt-4">
+        {% with reports=watchlisted_reports page_obj=watchlisted_reports_page_obj page_query="watchlisted_page"%}
+        {% include 'report/report_table.html' %}
+        {% endwith %}
+    </div>
+    {% endif %}
+
+    {% if reports %}
+    <div class="text-xl md:text-2xl dark:text-white text-wr-grey px-4 mt-4 py-2">{% trans 'Reports added by you' %}
+    </div>
+    <div class="md:mx-auto p-2 md:p-4 mt-4">
+        {% with reports=reports page_obj=reports_page_obj page_query="reports_page" %}
+        {% include 'report/report_table.html' %}
+        {% endwith %}
+    </div>
+    {% endif %}
+
+    {% if sightings %}
+    <div class="text-xl md:text-2xl text-wr-grey dark:text-white px-4 mt-12 py-2">
+        {% trans 'Sightings added by you' %}
+    </div>
+
+    <div class="md:mx-auto p-2 md:p-4 mt-4 mb-8">
+        {% with sightings=sightings page_obj=sightings_page_obj page_query="sightings_page"%}
+        {% include 'report/sighting_table.html' %}
+        {% endwith %}
+    </div>
+    {% endif %}
+
+    {% if not reports and not sightings %}
+    <div class="text-center text-xl text-wr-grey dark:text-white font-medium mt-4">
+        {% trans 'You have not yet done any activity' %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

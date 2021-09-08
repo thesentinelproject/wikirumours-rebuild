@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static%}
+{% block extra_header%}
+{% load admin_urls %}
+
+
+{{report_form.media}}
+{{sighting_form.media}}
+
+{% endblock %}
+
+{% block main_project %}
+<div class="w-full">
+    {{form.media}}
+    <div class="wr-input-container">
+
+        <div class="text-xl md:text-4xl text-center font-bold  mt-4  text-wr-blue mb-8"> {% trans 'Edit Report' %}</div>
+        <div class="blue-links text-right">
+            <a target="_blank" href="{% url 'report_evidence' report_public_id=report.public_id %}">
+                Go to Evidence
+            </a>
+        </div>
+        <div class="blue-links text-right">
+            <a target="_blank" href="{%url report|admin_urlname:'change' report.id %}">
+                Open in admin
+            </a>
+        </div>
+        <form method="post" action="{% url 'update_report' report_public_id=report.public_id%}"
+              enctype="multipart/form-data"
+              id="EditReport">
+
+            <div class="rounded px-8 md:px-12 py-8 md:py-12 mt-4 flex flex-col dark:bg-wr-grey-dark bg-white" id="edit_report">
+
+                {%csrf_token%}
+                {%for field in report_form %}
+                {% if field.help_text %}
+                <div class="flex flex-row items-center ">
+                    <div class="text-xs md:text-md text-wr-grey font-bold dark:text-white px-1">{{field.label}}</div>
+                    <div class="text-xs text-wr-grey dark:text-white">( {{field.help_text}} )</div>
+                </div>
+                {% else %}
+
+                <div class="text-xs md:text-md text-wr-grey font-bold dark:text-white  mb-2">{{field.label}}</div>
+
+                {% endif %}
+
+                {{field}}
+                <div class="text-red-600 py-2 md:font-extrabold">{{field.errors}}</div>
+                {% endfor %}
+
+
+            </div>
+
+
+
+
+            <div class="text-md md:text-2xl text-center font-bold text-wr-blue mt-8">{% trans 'Add more information about report Sighting' %}
+            </div>
+            <div class="rounded px-8 md:px-12 py-8 md:py-12 mt-4 flex flex-col dark:bg-wr-grey-dark bg-white">
+                {%for field in sighting_form %}
+                {% if field.help_text %}
+                <div class="flex flex-row items-center ">
+                    <div class="text-xs md:text-md text-wr-grey font-bold dark:text-white px-1">{{field.label}}</div>
+                    <div class="text-xs dark:text-white text-wr-grey">( {{field.help_text}} )</div>
+                </div>
+                {% else %}
+
+                <div class="text-xs md:text-md text-wr-grey dark:text-white  font-bold mb-2">{{field.label}}</div>
+
+                {% endif %}
+
+
+                {{field}}
+                <div class="text-red-600 py-2 md:font-extrabold">{{field.errors}}</div>
+                {% endfor %}
+
+
+            </div>
+            <div class="flex items-center my-8 justify-around">
+                <a class="bg-wr-blue hover:bg-blue-600 py-1 md:py-2 md:px-4 rounded  text-white"
+                href="{% url 'index' %}">
+                    {% trans 'Cancel' %}
+                </a>
+                <button class="action-button" type="submit">
+                    {% trans 'Submit' %}
+                </button>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    window.onload = function () {
+        jQuery('#id_report-occurred_on').datetimepicker();
+        jQuery('#id_sighting-heard_on').datetimepicker();
+    };
+
+</script>
+
+
+{% endblock %}

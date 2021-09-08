@@ -1,0 +1,89 @@
+{% load static %}
+{% load i18n %}
+
+{% if sightings%}
+<div class="md:justify-center bg-wr-shadow dark:bg-wr-grey-dark text-wr-grey-dark dark:text-white">
+    <div class="overflow-x-auto">
+        <table class="table-fixed border dark:border-white border-wr-grey w-full rounded">
+            <thead class="bg-wr-grey-light dark:bg-wr-grey-dark text-center">
+            <tr>
+                <th class="w-1/3 wr-report-table-cell-header px-4 text-left">
+                    {% trans 'Report' %}
+                </th>
+                <th class="wr-report-table-cell-header">
+                    {% trans 'Source' %}
+                </th>
+                <th class="wr-report-table-cell-header">
+                    {% trans 'Heard on' %}
+                </th>
+                <th class="wr-report-table-cell-header">
+                    {% trans 'Overheard at' %}
+                </th>
+            </tr>
+            </thead>
+            <tbody class="table-row-group">
+            {%for sighting in sightings %}
+            <tr class="table-row">
+                <td class="w-1/3 wr-report-table-cell-row text-left">
+                    <a class="cursor-pointer line-clamp-4"
+                       href="{% url 'view_report' report_public_id=sighting.report.public_id%}">
+                        <span class="md:hidden uil {{ report.priority.icon }}"
+                              title="{{ report.priority.name }}"
+                              style="color: {{ report.priority.colour }}">
+                        </span>
+                        {{sighting.report }}
+                    </a>
+
+                </td>
+                <td class="wr-report-table-cell-row">
+                    <a class="cursor-pointer" href="{% url 'view_report' report_public_id=sighting.report.public_id%}">
+                        {{sighting.source}}
+                    </a>
+                </td>
+                <td class="wr-report-table-cell-row">
+                    <a class="cursor-pointer" href="{% url 'view_report' report_public_id=sighting.report.public_id%}">
+                        {{sighting.heard_on}}
+                    </a>
+                </td>
+                <td class="wr-report-table-cell-row">
+                    <a class="cursor-pointer" href="{% url 'view_report' report_public_id=sighting.report.public_id%}">
+                        {{sighting.overheard_at}}
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="md:hidden flex justify-center items-center md:px-8 mt-8 space-x-2">
+    <div class="flex mr-4 dark:text-white">
+        {% trans 'Page' %} {{ page_obj.number }} {% trans 'of' %} {{ page_obj.paginator.num_pages }}
+    </div>
+</div>
+<div class="flex justify-center md:justify-end items-center md:px-8 mt-8 space-x-2">
+    {% if page_obj.has_previous %}
+    <button class="action-button-ter"><a
+            href="?{{page_query}}=1{% for key, value in request.GET.items %}{% if key != page_query %}&{{ key }}={{ value }}{% endif %}{% endfor %}">First</a>
+    </button>
+    <button class="action-button-ter"><a
+            href="?{{page_query}}={{page_obj.previous_page_number}}{% for key, value in request.GET.items %}{% if key != page_query %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Previous</a>
+    </button>
+    {% endif %}
+
+    <span class="hidden md:flex mr-4 dark:text-white">
+                {% trans 'Page' %} {{ page_obj.number }} {% trans 'of' %} {{ page_obj.paginator.num_pages }}
+            </span>
+
+    {% if page_obj.has_next %}
+    <button class="action-button-ter"><a
+            href="?{{page_query}}={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != page_query %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a>
+    </button>
+    <button class="action-button-ter"><a
+            href="?{{page_query}}={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != page_query %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Last </a>
+    </button>
+    {% endif %}
+</div>
+
+{% endif %}

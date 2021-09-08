@@ -1,0 +1,18 @@
+<html>
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block main_project %}
+<style>
+    {{cms_page.css_content|safe}}
+</style>
+<script>
+    {{cms_page.js_content|safe}}
+</script>
+<div class="p-8 dark:text-white dark:bg-wr-grey-dark mt-8">
+    <div class="justify-center">
+        {{cms_page.html_content|safe}}
+    </div>
+</div>
+{% endblock %}
+</html>

@@ -1,0 +1,272 @@
+{% load i18n %}
+{% load static %}
+
+<!DOCTYPE html>
+<html id="main_html_div" lang="en"
+      {% if user and user.is_dark_mode_enabled %}
+      class="dark"
+      {% endif %}
+>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Wikirumours</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.css' %}">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+    <script type="text/javascript" src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
+    <script type="text/javascript" src='{% static "js/popper.min.js" %}'></script>
+    <script src='{% static "js/jquery.cookie.min.js"%}'></script>
+    <script type="text/javascript" src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'css/jquery.datetimepicker.min.css' %}"></script>
+
+    <!-- Latest compiled and minified CSS -->
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+
+    {% block extra_header%}
+
+    {% endblock %}
+
+</head>
+
+<body>
+<header>
+    <div class="bg-wr-grey-dark dark:bg-wr-grey-dark  h-8 opacity-0.8">
+    </div>
+    <div class="bg-wr-grey dark:bg-wr-grey-dark text-center text-white p-3">
+        <nav class="">
+            <div class="flex justify-between ">
+                <div class="flex space-x-2">
+                    <div class="hamburger-menu md:hidden">
+                        <div class="hamburger">
+                            <img src="{% static 'hamburger_menu_icon.png' %}" class="h-8 w-8"/>
+                        </div>
+                    </div>
+                    <div class="hidden md:block">
+                        {% if request.domain.logo %}
+                        <a href="{% url 'home' %}">
+                            <img src="{{ request.domain.logo.url }}"
+                                 class="h-8 w-30 object-contain"/>
+                        </a>
+                        {% else %}
+                        <a href="{% url 'home' %}">
+                            <img src="{% static 'wikirumours_logo.png' %}"
+                                 class="h-8 w-30 object-contain"/>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div>
+                    {% block navbar %}
+                    <ul class="flex flex-row text-white text-xl">
+                        {% if request.menu %}
+                        {% for menu in request.menu %}
+                        <li class="hidden md:block px-1 md:px-5 md:py-2"><a
+                                href="{{menu.get_url}}">{{menu.title}}</a>
+                        </li>
+
+                        {% endfor %}
+                        {% endif %}
+                        {% for cms_page in request.cms_pages %}
+                        {% if cms_page.show_in_header %}
+                        <li class="hidden md:block px-1 md:px-5 md:py-2">
+                            <a href="{% url 'content_page' content_slug=cms_page.content_slug %}">
+                                {% trans cms_page.title %}
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if user.is_user_anonymous == true %}
+                        <a class="action-button" href="{% url 'login' %}">{% trans 'Login/Register' %}</a>
+                        {%else %}
+
+                        {% if user.role == 'Community Liaison' or user.role == 'Moderator' or user.role == 'Admin' %}
+                        <li class="pr-2 md:px-5 md:py-2 cursor-pointer">
+                            <a href="{% url 'my-task' %}">
+                                {% trans 'My Tasks' %}
+                                {% if request.user.tasks_count %}
+                                ({{request.user.tasks_count}})
+                                {% endif %}
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <li class="px-1 md:px-5 md:py-2 cursor-pointer" id="user">
+                            <a class="" id="drop-down-title">
+                                <div class="flex">My Profile
+                                    <img id="dropdown"
+                                         src="{% static 'dropdown.svg'%}"
+                                         class="w-6 h-6 md:w-8 md:h-8 object-contain"/>
+                                </div>
+                            </a>
+                            <div id="drop-down-menu" class="hidden h-auto pt-4 absolute origin-top-right right-0 z-30">
+                                <ul class="block w-full bg-white text-wr-grey dark:bg-wr-grey-dark dark:text-white shadow-sm p-2 border-2 border-wr-grey rounded-sm">
+                                    <li class="py-1 px-8"><a
+                                            href="{% url 'user_profile' %}"
+                                            class="block text-base  cursor-pointer">
+                                        {% trans 'My Account'%}</a>
+                                    </li>
+                                    <li class="py-1 px-8">
+                                        <a href="{% url 'my-activity' %}"
+                                           class="block  text-base  cursor-pointer">
+                                            {% trans 'My Activity' %}
+                                        </a>
+                                    </li>
+                                    <li class="py-1 px-8">
+                                        <a href="{% url 'chat' %}"
+                                           class="block  text-base  cursor-pointer ">
+                                            {% trans 'Messages' %}
+                                        </a>
+                                    </li>
+                                    {% if user.role == 'Admin' %}
+
+                                    <li class="py-1 px-8">
+                                        <a href="{% url 'admin:index' %}"
+                                           class="block  text-base  cursor-pointer ">
+                                            {% trans 'Settings' %}
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    <li class="py-1 px-8">
+                                        <a href="{% url 'logout_user' %}"
+                                           class="block text-base  cursor-pointer">
+                                            {% trans 'Logout' %}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    {% endblock %}
+                </div>
+            </div>
+
+        </nav>
+    </div>
+
+</header>
+
+<div id="content" class="flex-1 wr-content">
+    <div class="flex space-y-2 md:space-y-6 md:space-x-10">
+        <div class="hidden md:block md:w-1/7 dark:border-wr-grey md:border-t border-white bg fixed md:static top-0 md:top z-40 "
+             id="sidebar-slide">
+            {% block sidebar%}
+            <div class="bg-wr-grey dark:bg-wr-grey-dark text-white text-xl min-h-full h-screen">
+                <div class="block md:hidden float-right mr-4 mt-4" onclick="toggleSidebar()"><img
+                        src="{% static 'close.svg' %}" class="h-4 w-4 "/></div>
+                <ul class="flex flex-col text-white  text-md font-serif tracking-wide">
+
+                    <div class="md:hidden py-8">
+                        {% if request.domain.logo %}
+                        <a href="{% url 'home' %}">
+                            <img src="{{ request.domain.logo.url }}"
+                                 class="h-8 w-30 object-contain"/>
+                        </a>
+                        {% else %}
+                        <a href="{% url 'home' %}">
+                            <img src="{% static 'wikirumours_logo.png' %}"
+                                 class="h-8 w-30 object-contain"/>
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    {% if not request.user.is_anonymous %}
+                    <li class="hamburger-menu-item text-left line-clamp-3 md:max-w-xs">Welcome, <br/>{{request.user}}
+                    </li>
+                    <hr/>
+                    {% endif %}
+                    <li class="hamburger-menu-item text-left"><a href="{% url 'index' %}">
+                        {% trans 'Reports' %}
+                    </a>
+                    </li>
+                    <li class="hamburger-menu-item">
+                        <a href="{% url 'statistics' %}">
+                            {% trans 'Statistics' %}
+                        </a>
+                    </li>
+                    <li class="hamburger-menu-item">
+                        <a class="btn action-button whitespace-nowrap" href="{% url 'new_report' %}">{% trans 'Add Report' %}</a>
+                    </li>
+
+                    <hr class="mt-4"/>
+                    <li class="hamburger-menu-item">
+                        <a href="{% url 'articles' %}">{% trans 'Articles' %}
+                        </a>
+                    </li>
+
+                    {% for cms_page in request.cms_pages %}
+                    {% if cms_page.show_in_sidebar %}
+                    <li class="hamburger-menu-item">
+                        <a href="{% url 'content_page' content_slug=cms_page.content_slug %}">
+                            {{ cms_page.title }}
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+
+                    <!-- show header items in sidebar on smaller screens -->
+                    <div class="md-hidden">
+                        {% for cms_page in request.cms_pages %}
+                        {% if cms_page.show_in_header %}
+                        <li class="hamburger-menu-item">
+                            <a href="{% url 'content_page' content_slug=cms_page.content_slug %}">
+                                {{ cms_page.title }}
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+
+                </ul>
+            </div>
+            {% endblock %}
+        </div>
+        <div class="flex-1 min-h-screen w-full z-0">
+            {% block main_project %}
+            {% endblock %}
+        </div>
+    </div>
+
+</div>
+
+{% include 'footer.html' %}
+
+<script type="text/javascript">
+    function toggleSidebar(){
+        var sidebarSlide = document.querySelector('#sidebar-slide');
+         sidebarSlide.classList.toggle('hidden');
+    }
+
+    var dropDownTitle = document.querySelector('#drop-down-title');
+    var dropDownMenu = document.querySelector('#drop-down-menu');
+    if(dropDownTitle){
+        dropDownTitle.onclick = function() {
+            if(dropDownMenu){
+                dropDownMenu.classList.toggle('hidden');
+            }
+        }
+    }
+
+    var hamburgerMenu = document.querySelector('.hamburger-menu');
+    hamburgerMenu.onclick = function() {
+       toggleSidebar();
+    }
+
+
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,4 @@
+Welcome to Wikirumours
+Here is a link to verify your account:
+
+{{link}}

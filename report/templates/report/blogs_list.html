@@ -1,0 +1,32 @@
+{% extends 'base.html'%}
+{% load i18n %}
+{% load static%}
+{% block main_project%}
+<div class="p-2">
+    {% if blog_pages %}
+    <div class="text-2xl md:text-3xl font-bold  text-center text-blue-500">{% trans 'Articles' %}</div>
+    <br/>
+    <div class="flex flex-col p-2 bg-wr-shadow dark:bg-wr-grey-dark rounded">
+        {% for blog_page in blog_pages %}
+            {% if forloop.counter > 1%}<hr/>{% endif %}
+            <div class="text-blue-500 mt-2 md:px-2">{{blog_page.created_at|date }}</div>
+            <div class="my-2 md:p-2">
+                <a class="dark:text-white text-black"
+                   href="{% url 'blog_page' content_slug=blog_page.content_slug %}">
+                    {% trans blog_page.title %}
+                </a>
+            </div>
+            {% if blog_page.subtitle %}
+            <div class="text-base ml-2">
+                {{blog_page.subtitle}}
+            </div>
+            {% endif %}
+
+        {% endfor  %}
+    </div>
+    {% else %}
+    <div class="text-center text-xl text-wr-grey dark:text-white font-medium mt-4">No articles found.</div>
+    {% endif %}
+
+</div>
+{% endblock%}

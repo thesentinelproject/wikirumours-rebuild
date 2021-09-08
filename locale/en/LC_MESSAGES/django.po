@@ -1,0 +1,417 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-16 12:24+0530\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: blog/templates/blog/blogs_list.html:7
+msgid "List of Blogs"
+msgstr ""
+
+#: report/forms.py:14 report/templates/report/add_title.html:11
+msgid "Title"
+msgstr ""
+
+#: report/forms.py:25
+msgid "Occurred on"
+msgstr ""
+
+#: report/forms.py:40 report/forms.py:85 report/forms.py:151
+msgid "country"
+msgstr ""
+
+#: report/forms.py:41 report/forms.py:86 report/forms.py:152
+msgid "location"
+msgstr ""
+
+#: report/forms.py:60 report/forms.py:126
+#: report/templates/report/my_activity.html:91
+#: report/templates/report/sightings.html:87
+msgid "Heard on"
+msgstr ""
+
+#: report/forms.py:83 report/forms.py:149
+#: report/templates/report/my_activity.html:88
+#: report/templates/report/sightings.html:84
+msgid "Source"
+msgstr ""
+
+#: report/forms.py:84 report/forms.py:150
+#: report/templates/report/my_activity.html:94
+#: report/templates/report/sightings.html:90
+msgid "Overheard at"
+msgstr ""
+
+#: report/forms.py:87 report/forms.py:153
+msgid "reported via"
+msgstr ""
+
+#: report/forms.py:202
+msgid "assigned to"
+msgstr ""
+
+#: report/forms.py:203 report/templates/report/common_view_report.html:98
+#: report/templates/report/my_activity.html:27
+#: report/templates/report/my_task.html:19
+#: report/templates/report/report_list.html:61
+msgid "Priority"
+msgstr ""
+
+#: report/forms.py:204
+msgid "status"
+msgstr ""
+
+#: report/forms.py:205
+msgid "resolution"
+msgstr ""
+
+#: report/templates/report/add_report.html:13
+#: report/templates/report/add_title.html:16
+#: report/templates/report/matching_report.html:7 theme/templates/base.html:110
+msgid "Add Report"
+msgstr ""
+
+#: report/templates/report/add_report.html:16
+msgid "Add information about report"
+msgstr ""
+
+#: report/templates/report/add_report.html:45
+msgid "Add more information about report hearing"
+msgstr ""
+
+#: report/templates/report/add_report.html:71
+#: report/templates/report/edit_report.html:69
+msgid "Cancel"
+msgstr ""
+
+#: report/templates/report/add_report.html:75
+#: report/templates/report/edit_report.html:73
+msgid "Submit"
+msgstr ""
+
+#: report/templates/report/add_title.html:8
+msgid "Get started with adding Report"
+msgstr ""
+
+#: report/templates/report/add_title.html:14
+msgid "Enter title of report"
+msgstr ""
+
+#: report/templates/report/comments.html:66
+msgid "Add a comment"
+msgstr ""
+
+#: report/templates/report/comments.html:68
+msgid "Post"
+msgstr ""
+
+#: report/templates/report/common_view_report.html:20
+msgid "You have reported this"
+msgstr ""
+
+#: report/templates/report/common_view_report.html:128
+msgid "comments"
+msgstr ""
+
+#: report/templates/report/common_view_report.html:138
+msgid "sightings"
+msgstr ""
+
+#: report/templates/report/common_view_report.html:146
+msgid "I have also Heard"
+msgstr ""
+
+#: report/templates/report/common_view_report.html:153
+#: report/templates/report/common_view_report.html:160
+msgid "Edit"
+msgstr ""
+
+#: report/templates/report/edit_report.html:18
+msgid "Edit Report"
+msgstr ""
+
+#: report/templates/report/edit_report.html:44
+msgid "Add more information about report Sighting"
+msgstr ""
+
+#: report/templates/report/edit_sighting.html:14
+msgid "Edit sighting for"
+msgstr ""
+
+#: report/templates/report/matching_report.html:20
+msgid "Matched reports"
+msgstr ""
+
+#: report/templates/report/my_activity.html:11 theme/templates/base.html:102
+msgid "My Activity"
+msgstr ""
+
+#: report/templates/report/my_activity.html:14
+msgid "Reports added by you"
+msgstr ""
+
+#: report/templates/report/my_activity.html:24
+#: report/templates/report/my_activity.html:85
+#: report/templates/report/my_task.html:16
+#: report/templates/report/report_list.html:57
+msgid "Report"
+msgstr ""
+
+#: report/templates/report/my_activity.html:30
+#: report/templates/report/report_list.html:64
+msgid "Status"
+msgstr ""
+
+#: report/templates/report/my_activity.html:33
+#: report/templates/report/my_task.html:22
+#: report/templates/report/report_list.html:70
+msgid "Updated"
+msgstr ""
+
+#: report/templates/report/my_activity.html:36
+#: report/templates/report/my_task.html:25
+#: report/templates/report/report_list.html:73
+msgid "Occurred"
+msgstr ""
+
+#: report/templates/report/my_activity.html:77
+msgid "Sightings added by you"
+msgstr ""
+
+#: report/templates/report/my_activity.html:123
+msgid "You have not yet done any activity"
+msgstr ""
+
+#: report/templates/report/my_task.html:37
+msgid "None"
+msgstr ""
+
+#: report/templates/report/my_task.html:69
+msgid "No task assigned "
+msgstr ""
+
+#: report/templates/report/new_hearing.html:13
+msgid "Add sighting for"
+msgstr ""
+
+#: report/templates/report/report_list.html:11 theme/templates/base.html:99
+msgid "Reports"
+msgstr ""
+
+#: report/templates/report/report_list.html:25
+#: report/templates/report/report_list.html:27
+msgid "Search"
+msgstr ""
+
+#: report/templates/report/report_list.html:38
+msgid "Sort by"
+msgstr ""
+
+#: report/templates/report/report_list.html:41
+msgid "Recent Report"
+msgstr ""
+
+#: report/templates/report/report_list.html:45
+msgid "Most Common Report"
+msgstr ""
+
+#: report/templates/report/report_list.html:67
+msgid "Sightings"
+msgstr ""
+
+#: report/templates/report/report_list.html:124
+#: report/templates/report/sightings.html:125
+msgid "Page"
+msgstr ""
+
+#: report/templates/report/report_list.html:124
+#: report/templates/report/sightings.html:125
+msgid "of"
+msgstr ""
+
+#: report/templates/report/report_list.html:135
+msgid "No reports present"
+msgstr ""
+
+#: report/templates/report/sightings.html:65
+msgid "Show sightings as"
+msgstr ""
+
+#: report/templates/report/sightings.html:68
+msgid "Table"
+msgstr ""
+
+#: report/templates/report/sightings.html:72
+msgid "Map"
+msgstr ""
+
+#: report/templates/report/sightings.html:81
+msgid "Address"
+msgstr ""
+
+#: report/views.py:343
+msgid "Title of report cannot be empty"
+msgstr ""
+
+#: theme/templates/base.html:58 theme/templates/base.html:117
+msgid "Blogs"
+msgstr ""
+
+#: theme/templates/base.html:61 users/templates/users/login.html:39
+msgid "Login"
+msgstr ""
+
+#: theme/templates/base.html:71
+msgid "User profile"
+msgstr ""
+
+#: theme/templates/base.html:75
+msgid "Logout"
+msgstr ""
+
+#: theme/templates/base.html:106
+msgid "My Tasks"
+msgstr ""
+
+#: theme/templates/base.html:114
+msgid "Admin Site"
+msgstr ""
+
+#: users/authentication.py:14
+msgid "No credentials provided."
+msgstr ""
+
+#: users/authentication.py:26
+msgid "Invalid username/password/api-key"
+msgstr ""
+
+#: users/authentication.py:30
+msgid "User inactive or deleted."
+msgstr ""
+
+#: users/forms.py:19 users/forms.py:55
+#: users/templates/users/user_profile.html:73
+#: users/templates/users/user_profile.html:117
+msgid "Username"
+msgstr ""
+
+#: users/forms.py:28 users/forms.py:85
+msgid "Password"
+msgstr ""
+
+#: users/forms.py:35 users/forms.py:144
+#: users/templates/users/user_profile.html:33
+#: users/templates/users/user_profile.html:94
+msgid "First Name"
+msgstr ""
+
+#: users/forms.py:45 users/forms.py:154
+#: users/templates/users/user_profile.html:41
+#: users/templates/users/user_profile.html:98
+msgid "Last Name"
+msgstr ""
+
+#: users/forms.py:65 users/forms.py:110
+#: users/templates/users/user_profile.html:49
+#: users/templates/users/user_profile.html:104
+msgid "Email"
+msgstr ""
+
+#: users/forms.py:75 users/forms.py:164
+#: users/templates/users/user_profile.html:57
+#: users/templates/users/user_profile.html:108
+msgid "Phone Number"
+msgstr ""
+
+#: users/models.py:41
+msgid "email address"
+msgstr ""
+
+#: users/models.py:44
+msgid "A user with that email already exists."
+msgstr ""
+
+#: users/models.py:52
+msgid ""
+"If this is set to true, your name will not be displayed on reports submitted "
+"by you."
+msgstr ""
+
+#: users/templates/users/edit_profile.html:16
+msgid "Edit Profile"
+msgstr ""
+
+#: users/templates/users/edit_profile.html:45
+msgid "Save"
+msgstr ""
+
+#: users/templates/users/email_sent.html:9
+msgid "Verification mail has been sent to your email-Id"
+msgstr ""
+
+#: users/templates/users/forgot_password.html:35
+msgid "Send link to reset password"
+msgstr ""
+
+#: users/templates/users/login.html:12
+msgid "Log in to WiKiRumours"
+msgstr ""
+
+#: users/templates/users/login.html:45
+msgid "Using first time?"
+msgstr ""
+
+#: users/templates/users/login.html:47
+msgid "Sign up"
+msgstr ""
+
+#: users/templates/users/login.html:53
+msgid "Forgot password?"
+msgstr ""
+
+#: users/templates/users/reset_password.html:36
+msgid " Reset password"
+msgstr ""
+
+#: users/templates/users/sign_up.html:10
+msgid "Take a moment to register now"
+msgstr ""
+
+#: users/templates/users/sign_up.html:24
+msgid "Next"
+msgstr ""
+
+#: users/templates/users/user_profile.html:24
+msgid "Profile Details"
+msgstr ""
+
+#: users/templates/users/user_profile.html:65
+#: users/templates/users/user_profile.html:112
+msgid "Role"
+msgstr ""
+
+#: users/templates/users/user_profile.html:81
+msgid "Is user anonymous?"
+msgstr ""
+
+#: users/templates/users/user_profile.html:122
+msgid "Is user anonymous"
+msgstr ""
+
+#: users/templates/users/user_profile.html:134
+msgid "Edit Details"
+msgstr ""

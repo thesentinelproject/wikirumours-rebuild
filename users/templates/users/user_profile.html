@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% block extra_header%}
+{% endblock%}
+{% block main_project %}
+<div class=" h-full w-full ">
+    <div class="grid grid-cols-3 justify-between content-center mt-4">
+        <div></div>
+        <div>
+            <h1 class="text-wr-blue text-center"> {% trans 'Profile' %}</h1>
+        </div>
+        <div class="self-center">
+            <form action="{% url 'toggle_dark_mode' %}" method="POST">
+                {% csrf_token %}
+                <button class="action-button-ter float-right font-medium mr-4">
+                Toggle theme
+            </button>
+            </form>
+
+        </div>
+    </div>
+
+    <div class="wr-input-container rounded-lg">
+        <div class="md:flex justify-center ">
+            <div class="md:flex rounded bg-wr-shadow dark:bg-wr-grey-dark dark:text-white mt-8 w-full mb-4">
+                <div class="table m-4 px-1 md:px-4 py-2 md:py-6 w-full">
+                    <div class="table-row-group hidden md:block">
+                        <div class="table-row ">
+                            <div class="wr-table-cell-label">
+                                {% trans 'First Name' %}
+                            </div>
+                            <div class="wr-table-cell-description">
+                                {{user.first_name}}
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div class="wr-table-cell-label">
+                                {% trans 'Last Name' %}
+                            </div>
+                            <div class="wr-table-cell-description">
+                                {{user.last_name}}
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div class="wr-table-cell-label">
+                                {% trans 'Email' %}
+                            </div>
+                            <div class="wr-table-cell-description">
+                                {{user.email}}
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div class="wr-table-cell-label">
+                                {% trans 'Phone Number' %}
+                            </div>
+                            <div class="wr-table-cell-description">
+                                {{user.phone_number}}
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div class="wr-table-cell-label">
+                                {% trans 'Role' %}
+                            </div>
+                            <div class="wr-table-cell-description">
+                                {{user.role}}
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div class="wr-table-cell-label">
+                                {% trans 'Username' %}
+                            </div>
+                            <div class="wr-table-cell-description">
+                                {{user.username}}
+                            </div>
+                        </div>
+                        <div class="table-row  ">
+                            <div class="wr-table-cell-label">
+                                {% trans 'Is user anonymous?' %}
+                            </div>
+                            <div class="wr-table-cell-description">
+                                {{user.is_user_anonymous}}
+                            </div>
+                        </div>
+                        <div class="table-row  ">
+                            <div class="wr-table-cell-label">
+                                {% trans 'API key' %}
+                            </div>
+                            <div class="wr-table-cell-description">
+                                <form action="{% url 'generate_api_key'%}" method="POST"
+                                    onsubmit="return confirm('Are you sure you wish to generate a new API key?')">
+                                    {% if not user.api_key %}
+                                    Api key has not been generated.
+                                    {% else %}
+                                    ***********
+                                    {% endif %}
+                                    {% csrf_token %}
+                                    <button type="submit" class="action-button-snd">
+                                        Click
+                                        to
+                                        generate a new api key
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="md:hidden">
+                        <div class="overflow-x-auto mt-2 px-1 md:px-4 py-2 md:py-6" style="width:98%">
+                            <div class="mt-2 py-3">
+                                <span class="wr-table-cell-label-sm"> {% trans 'First Name' %} </span>
+                                <span class="wr-table-cell-description-sm">{{user.first_name}}</span>
+                            </div>
+                            <div class="mt-2 py-3">
+                                <span class="wr-table-cell-label-sm"> {% trans 'Last Name' %}</span>
+                                <span class="wr-table-cell-description-sm">{{user.last_name}}</span>
+                            </div>
+                            <div class="mt-2 py-3">
+                                <span class="wr-table-cell-label-sm">{% trans 'Email' %}</span>
+                                <span class="wr-table-cell-description-sm">{{user.email}}</span>
+                            </div>
+                            <div class="mt-2 py-3">
+                                <span class="wr-table-cell-label-sm">{% trans 'Phone Number' %} :</span>
+                                <span class="wr-table-cell-description-sm">{{user.phone_number}}</span>
+
+                            </div>
+                            <div class="mt-2 py-3 ">
+                                <span class="wr-table-cell-label-sm">{% trans 'Role' %} :</span>
+                                <span class="wr-table-cell-description-sm">{{user.role}}</span>
+
+                            </div>
+                            <div class="mt-2 py-3">
+                                <span class="wr-table-cell-label-sm">{% trans 'Username' %} :</span>
+                                <span class="wr-table-cell-description-sm">{{user.username}}</span>
+
+                            </div>
+                            <div class="mt-2 py-3">
+                                <span class="wr-table-cell-label-sm">{% trans 'Is user anonymous' %} :</span>
+                                <span class="wr-table-cell-description-sm">{{user.is_user_anonymous}}</span>
+                            </div>
+                            <div class="mt-2 py-3">
+                                <span class="wr-table-cell-label-sm"> {% trans 'API key' %} :</span>
+                                <span class="wr-table-cell-description-sm">
+                                    {% if not user.api_key %}
+                                    Api key has not been generated.
+                                    {% else %}
+                                    {{ user.api_key }}
+                                    {% endif %}
+                                </span>
+                                <div class="mt-4 py-3 text-center">
+                                    <form action="{% url 'generate_api_key'%}" method="POST"
+                                        onsubmit="return confirm('Are you sure you wish to generate a new API key?')">
+                                        {% csrf_token %}
+                                        <button type="submit" class="action-button-snd">
+                                            Click
+                                            to
+                                            generate api key
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center py-4 px-4 mt-4">
+                        <button class="action-button" onclick="window.location='{% url 'edit_profile'  %}'">
+                            Edit Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

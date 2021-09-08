@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+<html>
+{% block main_project%}
+<div class="h-screen md:h-full">
+    <div class="text-2xl md:text-4xl mt-4 font-bold  text-center text-wr-blue">
+        {% trans 'Add Report' %}
+    </div>
+    <div class="md:mx-auto p-2 md:p-4 mt-4">
+        <form class="flex flex-col p-1 bg-wr-shadow dark:bg-wr-grey-dark rounded" method="post"
+            action="{% url 'add_report'%}">
+            {% csrf_token %}
+            <div class="w-full md:w-full wr-shadow p-2 flex rounded">
+                <input type="text" class="flex-1 rounded pl-2 dark:text-white dark:bg-wr-grey form-control text-wr-grey"
+                    value="{{title}}" name="title" id="title" placeholder="Enter title of report" />
+                <button class="action-button" type="submit">
+                    Add New Report
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="flex flex-col mx-auto w-auto mt-4 mb-8 p-3 ">
+        <div class="text-wr-blue mb-2">{% trans 'Do you see your report below? If not, please continue with adding a new report above'%}</div>
+
+        {% for report in reports %}
+            <div class="flex flex-row w-full rounded bg-wr-shadow dark:bg-wr-grey-dark dark:text-white text-center  p-4  mt-2 justify-between"
+                onclick="window.location='{% url 'add_sighting' report_public_id=report.public_id%}';">
+                <div class="flex-grow text-md text-left">
+                    {{report.title}}
+                </div>
+                <button class="flex-none dark:text-white px-3">
+                    <img src="{%static 'arrow.svg'%}" alt="arrow" class="h-6 w-6" />
+                </button>
+
+            </div>
+        {% endfor %}
+
+        <div class="mt-8 text-center"><a href="{% url 'new_report'%}" class="action-button-ter mb-2">Start over</a></div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+</html>

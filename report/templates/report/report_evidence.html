@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static%}
+{% block extra_header%}
+
+{% endblock %}
+
+{% block main_project %}
+<div class="w-full text-center">
+        <div class="wr-input-container">
+            <div class="text-xl md:text-4xl text-center font-bold  mt-4  text-wr-blue mb-8"> {% trans 'Upload Evidence' %}</div>
+            <div class="text-lg my-4">For report : {{report}}</div>
+            <div class="blue-links">
+            {% for evidence_file in report.evidencefile_set.all %}
+            <div>
+                <a href="{{evidence_file.file.url}}">
+                    {{evidence_file.filename}}
+                </a>
+            </div>
+            {% endfor %}
+            </div>
+            <div class="mt-4">
+                Note: Only files which are made public by an admin will appear on the report page.
+            </div>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mt-5"><input type="file" name="evidence_files" multiple></div>
+                <div class="mt-5"><button class="action-button" type="submit">Upload</button></div>
+            </form>
+        </div>
+</div>
+{% endblock %}

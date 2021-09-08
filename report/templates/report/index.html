@@ -1,0 +1,16 @@
+<html>
+    {% extends 'base.html' %}
+   {%load static%}
+
+
+{% block main_project %}
+<div class="h-full justify-center ">
+    <div class="w-full mt-6  text-2xl border text-center"> This is index page of {{current_host}}</div>
+    {%if default %}
+   <img  src="{{ default }}" alt="Card image cap"/>
+    {%else %}
+    <img src ="{{domain.logo.url}}" target="_blank">{{domain.domain}}</img>
+    {% endif %}
+</div>
+{% endblock %}
+</html>

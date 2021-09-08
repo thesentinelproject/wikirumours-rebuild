@@ -1,0 +1,47 @@
+<html>
+
+{% extends 'base_without_navbar.html' %}
+{% load static %}
+{% load i18n %}
+
+
+{% block main_project %}
+<div class="bg-white h-full w-full">
+    <div class="mx-auto w-64 md:w-96">
+        <h2 class="pt-8 mb-8"> {% trans 'Log in to Wikirumours' %}</h2>
+        <div class="rounded px-4 md:px-8 py-12 mt-4 flex flex-col bg-wr-shadow">
+
+            <form action="{% url 'login'%}" method="post" enctype="multipart/form-data" id="LoginForm">
+                {% csrf_token %}
+                {%for field in form %}
+                <div class="text-xs md:text-md text-wr-grey font-bold mb-2">{{field.label}}</div>
+
+
+                <div class="mb-2"> {{field}}</div>
+                {% endfor %}
+
+                <button class="action-button w-full mt-8" type="submit">
+                    {% trans 'Login' %}
+                </button>
+
+                <div class="mt-4 flex flex-col md:flex-row justify-around">
+                    <div class="mt-4 text-center">
+                        <div class="text-xs text-wr-grey">{% trans 'Using first time?' %}</div>
+                        <a class="text-wr-blue underline text-xs" href="{%url 'sign_up' %}" type="button">
+                            {% trans 'Sign up' %}
+                        </a>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <div class="text-xs text-wr-grey">{% trans 'Forgot Password?' %}</div>
+                        <a class="text-wr-blue underline text-xs" href="{% url 'forgot_password' %}" type="button">
+                            {% trans 'Reset password' %}
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+</html>

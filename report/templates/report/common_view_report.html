@@ -1,0 +1,187 @@
+{% load static %}
+{% load i18n %}
+
+<div class="mt-16 md:grid grid-cols-1 text-center md:grid-cols-4 items-center justify-center gap-4">
+    <div class="md:col-span-2 md:row-span-4 items-center justify-center mb-8">
+        <div id="map_markers_div" class="flex rounded justify-center content-center " style="height:600px"></div>
+        <div id="date-range-slider" class="mt-8 ml-16 mr-16">
+        </div>
+    </div>
+
+    <div class="md:flex justify-center md:col-span-2 content-center ml-4 mr-4 mb-8">
+
+        <div>
+            <div class="blockquote-open">
+                <div class="blockquote-close">
+                    <h2 class="md:p-8 dark:text-white"> {{report.title}} </h2>
+                </div>
+            </div>
+
+            <div class="report-text dark:text-white">
+                {% if user == report.reported_by and first_sighting_report.is_first_sighting == True and user.role == 'End User'%}
+                {% trans 'You have reported this' %}.Occurred in {{report.country}} on {{report.occurred_on|date}} at {{report.occurred_on|time}}.<br />
+                {% if first_sighting_report.reported_via %}
+                Reported via {{first_sighting_report.reported_via}}
+                {% endif %}
+                {% if first_sighting_report.heard_on %}
+                 on {{first_sighting_report.heard_on|date}} at {{first_sighting_report.heard_on|time}}
+                {% endif %}
+
+                {% elif user != report.reported_by and added_sightings and user.role == 'End User'%}
+                You have added details about hearing this on {{added_sightings.heard_on|date}}.<br/>
+                Occurred in {{report.country}} on {{report.occurred_on|date}} at {{report.occurred_on|time}}<br />
+                Reported by
+                {%if report.reported_by.is_user_anonymous%}
+                {{"Anonymous"}}
+                {% else %}
+                <a href="{{report.reported_by.absolute_url}}"> {{report.reported_by}}</a>
+                {% endif %}
+                {% if first_sighting_report.reported_via %}
+                 via {{first_sighting_report.reported_via}}
+                {% endif %}
+                {% if first_sighting_report.heard_on %}
+                 on {{first_sighting_report.heard_on|date}} at {{report.occurred_on|time}}
+                {% endif %}
+
+
+                {% elif user.role != 'End User' %}
+                Occurred in {{report.country}} on {{report.occurred_on|date}} at {{report.occurred_on|time}}<br />
+                Reported by
+                {% if report.reported_by.is_user_anonymous %}
+                {{"Anonymous"}}
+                {% else %}
+                <a href="{{report.reported_by.absolute_url}}"> {{report.reported_by}}</a>
+                {% endif %}
+                {% if first_sighting_report.reported_via %}
+                 via {{first_sighting_report.reported_via}}
+                {% endif %}
+                {% if first_sighting_report.heard_on %}
+                 on {{first_sighting_report.heard_on|date}} at {{report.occurred_on|time}}
+                {% endif %}
+
+                {% else %}
+
+                Occurred in {{report.country}} on {{report.occurred_on|date}} at {{report.occurred_on|time}}<br />
+                Reported by
+                {%if report.reported_by.is_user_anonymous%}
+                {{"Anonymous"}}
+                {% else %}
+                <a href="{{report.reported_by.absolute_url}}"> {{report.reported_by}}</a>
+                {% endif %}
+                {% if first_sighting_report.reported_via %}
+                 via {{first_sighting_report.reported_via}}
+                {% endif %}
+                {% if first_sighting_report.heard_on %}
+                 on {{first_sighting_report.heard_on|date}} at {{report.occurred_on|time}}
+                {% endif %}
+
+                {% endif %}
+                {% if heard_by_others > 0 %}
+                <br/>
+                Also heard by <u><a href="{% url 'sightings' report_public_id=report.public_id %} ">{{heard_by_others}} other(s)</a></u>
+                {% endif %}
+
+            </div>
+            <div class="md:flex justify-center mt-4">
+                <div class="items-center">
+                    {% if report.tags.all%}
+                    {% for tag in report.tags.all %}
+                    <span class="report-tag"> # {{ tag.name }} </span>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            <hr class="my-4">
+
+            <div class="md:flex justify-center mt-4">
+                <div class="items-center text-wr-blue text-2xl">
+                    {% if report.status.name %}
+                    {% trans 'This report is ' %}<b> {% trans report.status.name %}</b>
+                    {% endif %}
+
+                    {% if not report.priority %}
+                    .
+                    {% endif %}
+
+                    {% if report.priority and report.status.name %}
+                     {% trans ' and is of' %}
+                    {% endif %}
+
+
+                    {% if report.priority %}
+                    <b>{% trans report.priority.name %}</b> {% trans 'Priority' %}.
+                    {% trans 'Here is why' %} -
+                    {% endif %}
+                </div>
+            </div>
+            <div class="md:flex text-center mx-auto mx-4 justify-center py-8">
+                {% if report.resolution%}
+                <div class="block md:text-xl dark:text-white">
+                    {{report.resolution|urlize}}
+                    {% if report.recently_edited_by %}
+                    <div class="text-wr-blue mt-4">
+                        Resolution added by - <a href="{{report.recently_edited_by.absolute_url}}">{{report.recently_edited_by}}</a>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="blue-links">
+            {% for evidence_file in report.evidencefile_set.all %}
+                {% if evidence_file.is_public %}
+                    <div><a href="{{evidence_file.file.url}}">{{evidence_file.filename}}</a></div>
+                {% endif %}
+            {% endfor %}
+            </div>
+            <div class="md:flex text-center justify-evenly content-center items-start">
+
+                {% if user != report.reported_by and added_sightings == None and user.role == 'End User' %}
+                <!--        if end user has not reported or added any sighting till now for report then he can add sighting -->
+                <div class="action-button mx-2 my-2" onclick="window.location='{% url 'add_sighting' report_public_id=report.public_id%}';">
+                    {% trans 'I have also heard this' %}
+                </div>
+                {% elif user.role != 'End User' %}
+                <div class="action-button mx-2 my-2" onclick="window.location='{% url 'add_sighting' report_public_id=report.public_id%}';">
+                    {% trans 'I have also heard this' %}
+                </div>
+                {% endif %}
+                {% if is_report_watchlisted %}
+                <form class="md:inline-block md:my-2" method="post"
+                    action="{% url 'remove_from_watchlist' report_public_id=report.public_id %}">
+                    {%csrf_token%}
+                        <button type="submit" class="action-button-ter pl-6 pr-6 sm:mt-4 md:mt-0 mx-2">
+                            {% trans 'Remove from watchlist' %}
+                        </button>
+                </form>
+                {% else %}
+                <form class="md:inline-block md:my-2" method="post"
+                    action="{% url 'add_to_watchlist' report_public_id=report.public_id %}">
+                    {%csrf_token%}
+                        <button type="submit" class="action-button-ter pl-6 pr-6 sm:mt-4 md:mt-0 mx-2">
+                            {% trans 'Add to watchlist' %}
+                        </button>
+                </form>
+                {% endif %}
+
+                <div class="action-button-ter mx-2 my-2" onclick="window.location='{% url 'comments' report_public_id=report.public_id %}'">
+                    {{comments_count|default:""}} {% trans 'Comments' %}
+                </div>
+
+                {% if user.role == 'Community Liaison' and user == report.assigned_to or user.role == 'Moderator' or user.role == 'Admin' %}
+                <div class="action-button-ter mx-2 my-2" onclick="window.location='{% url 'edit_report' report_public_id=report.public_id %}'">
+                    {% trans 'Edit' %}
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+// submit form filter - used on change
+    function filterSubmit(){
+        var form = document.getElementById('filterForm')
+        form.submit()
+    }
+</script>

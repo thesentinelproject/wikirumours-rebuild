@@ -1,0 +1,42 @@
+<html>
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block main_project %}
+<div class="p-8 dark:text-white dark:bg-wr-grey-dark mt-8">
+    {% if request.domain and request.domain.index_cms_page %}
+    {{request.domain.index_cms_page.html_content|safe}}
+    {% else %}
+    <div class="justify-center">
+        <p class="text-md md:text-xl">
+            Misinformation and disinformation pose a challenge to development, governance, public health, and human
+            security efforts around the world. WikiRumours is a workflow and technology platform designed to counter the
+            spread of false information through transparency and early mitigation of conflict.
+        </p>
+        <p class="mt-10 text-md md:text-xl  ">
+            As communications technology has become more widely distributed in the developing world, the spread of
+            inaccurate, incomplete or fabricated information is an increasingly significant threat to peace and
+            stability, particularly in regions with limited access to reliable third-party media.
+        </p>
+        <p class="mt-10 text-md md:text-xl ">
+            WikiRumours can be used to contextualize and mitigate misinformation through community involvement, crisis
+            moderation, and transparency.
+        </p>
+        <div class="mb-4 text-md md:text-xl mt-8">Want to help?</div>
+        <ul class="text-md md:text-xl list-disc list-inside">
+            <li>If you've heard a rumour in your community which represents an immediate risk of conflict, <a
+               href="{% url 'new_report' %}" class=" underline hover:underline dark:text-white text-wr-grey cursor-pointer"> report it now.</a>
+            </li>
+            <li>If you have verifiable information on an existing rumour recorded in WikiRumours, leave a comment on
+                it.
+            </li>
+            <li>If you want to implement a private, local instance of WikiRumours, download the open source version of
+                the software (coming soon).
+            </li>
+            <li>Spread the word about WikiRumours in your community and beyond!</li>
+        </ul>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+</html>

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block extra_header%}
+
+<script type="text/javascript" src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
+<script src='{% static "js/jquery.cookie.min.js"%}'></script>
+
+{{ sighting_form.media }}
+
+{% endblock %}
+
+{% block main_project%}
+<div>
+    <div class="mx-auto p-2 md:p-8 w-auto md:w-3/4">
+    <div class="text-xl">{% trans 'Edit sighting for'%} <span class="text-blue-600 text-2xl px-3">{{sighting.report}}</span> </div>
+
+
+        <div class="shadow-2xl rounded px-8 md:px-12 py-8 md:py-12 mt-4 flex flex-col bg-white ">
+            <form method="post" action="{% url 'update_sighting'  sighting_id=sighting.id %}"
+                  enctype="multipart/form-data" id="EditSighting">
+
+                {%csrf_token%}
+                {%for field in sighting_form %}
+                <div class="text-xs md:text-md text-wr-grey font-bold mb-2">{{field.label}}</div>
+
+
+                {{field}}
+                <div class="text-red-600 py-2 md:font-extrabold">{{field.errors}}</div>
+                {% endfor %}
+
+
+                <div class="flex justify-end py-4">
+                    <button class="bg-blue-400 text-white font-bold py-1 md:py-2 px-4 md:px-6 rounded" type="submit">
+
+                        Next
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

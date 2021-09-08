@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block main_project %}
+<div class="w-full">
+    <div class="text-2xl md:text-4xl mt-4 font-bold  text-center text-wr-blue">
+        {% trans 'Add Report' %}
+    </div>
+
+    <div class="wr-input-container">
+        <form method="post" action="{% url 'create_report'%}" enctype="multipart/form-data" id="AddReport">
+            <div class="text-xl md:text-2xl text-wr-grey dark:text-white px-4 mt-4 py-2">{% trans 'Add information about report' %}
+            </div>
+
+            <div class="rounded px-8 md:px-12 py-8 md:py-12 mt-4 flex flex-col bg-wr-shadow dark:bg-wr-grey-dark">
+                {%csrf_token%}
+                {{report_form.media}}
+                {%for field in report_form %}
+                {% if field.help_text %}
+                <div class="flex flex-row items-center ">
+                    <div class="text-xs md:text-md text-wr-grey dark:text-white font-bold px-1">{{field.label}}</div>
+                    <div class="text-xs text-wr-grey dark:text-white">( {{field.help_text}} )</div>
+                </div>
+                {% else %}
+
+                <div class="text-xs md:text-md text-wr-grey dark:text-white font-bold mb-2">{{field.label}}</div>
+
+                {% endif %}
+
+                {{field}}
+                <div class="text-red-600 py-2 font-bold">{{field.errors}}</div>
+                {% endfor %}
+
+
+            </div>
+            <br />
+            <div class="text-xl md:text-2xl text-wr-grey dark:text-white px-4 py-2">
+                {% trans 'Add more information about report sighting'%}
+            </div>
+            <div class="rounded px-8 md:px-12 py-8 md:py-12 mt-4 flex flex-col bg-wr-shadow dark:bg-wr-grey-dark">
+                {%for field in sighting_form %}
+                {% if field.help_text %}
+                <div class="flex flex-row items-center ">
+                    <div class="text-xs md:text-md text-wr-grey dark:text-white font-bold px-1">{{field.label}}</div>
+                    <div class="text-xs text-wr-grey dark:text-white">( {{field.help_text}} )</div>
+                </div>
+                {% else %}
+                <div class="text-xs md:text-md text-wr-grey dark:text-white font-bold mb-2">{{field.label}}</div>
+                {% endif %}
+
+
+                {{field}}
+                <div class="text-red-600 py-2 font-bold">{{field.errors}}</div>
+                {% endfor %}
+
+
+
+            </div>
+            <div class="flex items-center mt-8 mb-16 justify-around">
+                <button class="action-button-ter" onclick="window.location='{% url 'index'%}'">
+                    {% trans 'Cancel' %}
+                </button>
+                <button class="action-button" type="submit">
+                    {% trans 'Submit' %}
+                </button>
+
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+
+
+
+<script>
+    window.onload = function () {
+        jQuery('#id_report-occurred_on').datetimepicker();
+        jQuery('#id_sighting-heard_on').datetimepicker();
+    };
+
+</script>
+
+{% endblock %}

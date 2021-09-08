@@ -1,0 +1,17 @@
+<html>
+{% extends 'base_without_navbar.html' %}
+{% load i18n %}
+
+
+{% block main_project %}
+<div class="bg-gray-100 h-full w-full">
+    <div class="mx-auto  p-6 md:p-8 w-8/12">
+        <div class="text-center mt-16"> {% trans 'A verification mail has been sent to your email address.' %}
+        </div>
+        <div class="text-center mt-4"> {% trans 'Please follow the link in the mail to reset your password.' %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+</html>

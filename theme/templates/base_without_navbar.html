@@ -1,0 +1,62 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en"
+      {% if user and user.is_user_anonymous %}
+      class="dark"
+      {% endif %}
+>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Wikirumours</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+     <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+</head>
+
+<body class='flex flex-col h-full'>
+    <header>
+        <div class="bg-wr-grey-dark  h-8 opacity-0.8">
+        </div>
+        <div class="bg-wr-grey text-center text-white p-3 pb-6">
+            <nav class="flex justify-between">
+                <div>
+                    <a href="{% url 'home' %}">
+                        <img src="{% static 'wikirumours_logo.png' %}" class="h-8 w-30 object-contain" />
+                    </a>
+                </div>
+                {% block navbar %}
+                {% endblock %}
+            </nav>
+        </div>
+    </header>
+    {% if messages %}
+    <div class="messages text-center">
+        {% for message in messages %}
+        <div>
+        <li class=" text-red-600 py-2 font-extrabold" > {{ message }}</li>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div id='content' class="flex-1">
+        <div>{% block sidebar%}
+
+            {% endblock %}
+        </div>
+        <div class="bg-gray-100"> {% block main_project %}
+            {% endblock %}
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+</body>
+
+</html>

@@ -1,0 +1,5 @@
+Hello,
+
+A new report was added on {{report.domain.domain}}
+
+{{report.title}}
