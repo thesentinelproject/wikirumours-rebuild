@@ -386,3 +386,7 @@ class EvidenceFile(models.Model):
     def filename(self):
         import os
         return os.path.basename(self.file.name)
+
+    class Meta:
+        verbose_name = "Evidence File"
+        verbose_name_plural = "Evidence Files"

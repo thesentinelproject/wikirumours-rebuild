@@ -12,7 +12,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Wikirumours</title>
+    <title>{{ request.domain.name }}</title>
     <meta name="description" content="">
     <meta name="keywords" content="">
     <meta name="author" content="">
@@ -39,10 +39,23 @@
 </head>
 
 <body>
-<header>
-    <div class="bg-wr-grey-dark dark:bg-wr-grey-dark  h-8 opacity-0.8">
+<div>
+    <div class="bg-wr-grey-dark dark:bg-wr-grey-dark min-h-8 opacity-0.8 text-center px-2 py-4">
+        <div class="md:hidden">
+            {% if request.domain.logo %}
+            <a href="{% url 'home' %}">
+                <img src="{{ request.domain.logo.url }}"
+                     class="h-12 w-44 object-contain"/>
+            </a>
+            {% else %}
+            <a href="{% url 'home' %}">
+                <img src="{% static 'wikirumours_logo.png' %}"
+                     class="h-12 w-44 object-contain"/>
+            </a>
+            {% endif %}
+        </div>
     </div>
-    <div class="bg-wr-grey dark:bg-wr-grey-dark text-center text-white p-3">
+    <div class="bg-wr-grey dark:bg-wr-grey text-center text-white p-3">
         <nav class="">
             <div class="flex justify-between ">
                 <div class="flex space-x-2">
@@ -55,12 +68,12 @@
                         {% if request.domain.logo %}
                         <a href="{% url 'home' %}">
                             <img src="{{ request.domain.logo.url }}"
-                                 class="h-8 w-30 object-contain"/>
+                                 class="h-12 w-44 object-contain"/>
                         </a>
                         {% else %}
                         <a href="{% url 'home' %}">
                             <img src="{% static 'wikirumours_logo.png' %}"
-                                 class="h-8 w-30 object-contain"/>
+                                 class="h-12 w-44 object-contain"/>
                         </a>
                         {% endif %}
                     </div>
@@ -155,7 +168,7 @@
         </nav>
     </div>
 
-</header>
+</div>
 
 <div id="content" class="flex-1 wr-content">
     <div class="flex space-y-2 md:space-y-6 md:space-x-10">
@@ -167,22 +180,10 @@
                         src="{% static 'close.svg' %}" class="h-4 w-4 "/></div>
                 <ul class="flex flex-col text-white  text-md font-serif tracking-wide">
 
-                    <div class="md:hidden py-8">
-                        {% if request.domain.logo %}
-                        <a href="{% url 'home' %}">
-                            <img src="{{ request.domain.logo.url }}"
-                                 class="h-8 w-30 object-contain"/>
-                        </a>
-                        {% else %}
-                        <a href="{% url 'home' %}">
-                            <img src="{% static 'wikirumours_logo.png' %}"
-                                 class="h-8 w-30 object-contain"/>
-                        </a>
-                        {% endif %}
-                    </div>
 
                     {% if not request.user.is_anonymous %}
-                    <li class="hamburger-menu-item text-left line-clamp-3 md:max-w-xs">Welcome, <br/>{{request.user}}
+                    <li class="hamburger-menu-item text-left line-clamp-3 md:max-w-xs">
+                        Welcome, <br/>{{request.user}}
                     </li>
                     <hr/>
                     {% endif %}
@@ -207,7 +208,7 @@
 
                     {% for cms_page in request.cms_pages %}
                     {% if cms_page.show_in_sidebar %}
-                    <li class="hamburger-menu-item">
+                    <li class="hamburger-menu-item line-clamp-3 md:max-w-xs">
                         <a href="{% url 'content_page' content_slug=cms_page.content_slug %}">
                             {{ cms_page.title }}
                         </a>

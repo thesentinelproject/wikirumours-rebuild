@@ -34,14 +34,14 @@
 
     <div class="md:mx-auto p-2 md:p-4 mt-4 mb-8">
         {% with sightings=sightings page_obj=sightings_page_obj page_query="sightings_page"%}
-        {% include 'report/sighting_table.html' %}
+        {% include 'report/report_sighting_table.html' %}
         {% endwith %}
     </div>
     {% endif %}
 
     {% if not reports and not sightings %}
     <div class="text-center text-xl text-wr-grey dark:text-white font-medium mt-4">
-        {% trans 'You have not yet done any activity' %}
+        {% trans 'No matching activity' %}
     </div>
     {% endif %}
 

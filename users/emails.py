@@ -68,7 +68,7 @@ def new_report_alert(report):
     # admins and moderators for the report's domain
     from users.models import User
 
-    recipients = User.objects.filter(role__in=[User.ADMIN, User.MODERATOR], role_domains=report.domain)
+    recipients = User.objects.filter(role__in=[User.ADMIN, User.MODERATOR], role_domains=report.domain, enable_email_notifications=True)
 
     context = {
         'report': report,

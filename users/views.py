@@ -236,9 +236,19 @@ def view_user(request, username):
     domain = Domain.objects.filter(domain=request.get_host()).first()
 
     tab = request.GET.get('tab', None)
-    number_of_reports = Report.objects.filter(reported_by=user, domain=domain).count()
-    number_of_sightings = Sighting.objects.filter(user=user, report__domain=domain).count()
-    number_of_comments = Comment.objects.filter(user=user, report__domain=domain).count()
+
+    reports = Report.objects.filter(reported_by=user).order_by('-updated_at')
+    sightings = Sighting.objects.filter(user=user).order_by('-updated_at')
+    comments = Comment.objects.filter(user=user).order_by('-updated_at')
+    if not domain.is_root_domain:
+        reports = reports.filter(domain=domain)
+        sightings = sightings.filter(report__domain=domain)
+        comments = comments.filter(report__domain=domain)
+
+    number_of_reports = reports.count()
+    number_of_sightings = sightings.count()
+    number_of_comments = comments.count()
+
     context = {
         'user': user,
         'number_of_reports': number_of_reports,
@@ -247,7 +257,6 @@ def view_user(request, username):
         'tab': tab,
     }
     if tab == 'reports':
-        reports = Report.objects.filter(reported_by=user, domain=domain).order_by('-updated_at')
 
         paginator = Paginator(reports, 20)
         page_number = request.GET.get("reports_page")
@@ -256,7 +265,6 @@ def view_user(request, username):
         context['reports'] = page_obj.object_list
         context['page_obj'] = page_obj
     elif tab == 'sightings':
-        sightings = Sighting.objects.filter(user=user, report__domain=domain).order_by('-updated_at')
         paginator = Paginator(sightings, 20)
         page_number = request.GET.get("sightings_page")
         page_obj = paginator.get_page(page_number)
@@ -264,7 +272,6 @@ def view_user(request, username):
         context['sightings'] = page_obj.object_list
         context['page_obj'] = page_obj
     elif tab == 'comments':
-        comments = Comment.objects.filter(user=user, report__domain=domain).order_by('-updated_at')
         paginator = Paginator(comments, 20)
         page_number = request.GET.get("comments_page")
         page_obj = paginator.get_page(page_number)

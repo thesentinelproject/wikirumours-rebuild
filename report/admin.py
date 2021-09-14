@@ -16,7 +16,7 @@ class DomainAdmin(admin.ModelAdmin):
 
 class ReportAdmin(admin.ModelAdmin):
     model = Report
-    list_display = ['title', 'country', 'priority', 'status', 'reported_by']
+    list_display = ['title', 'domain', 'country', 'priority', 'status', 'reported_by']
     search_fields = ['title']
     formfield_overrides = {models.PointField: {"widget": GooglePointFieldWidget}}
 
@@ -46,6 +46,7 @@ class EvidenceFileAdmin(admin.ModelAdmin):
     model = EvidenceFile
     list_filter = [ReportFilter]
     list_display = ['filename', 'is_public', 'report', ]
+
 
 
 admin.site.register(Domain, DomainAdmin)

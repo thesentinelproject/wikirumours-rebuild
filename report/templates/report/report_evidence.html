@@ -7,6 +7,11 @@
 
 {% block main_project %}
 <div class="w-full text-center">
+        {% for message in messages %}
+        <div>
+            <li class=" text-red-600 py-2 font-extrabold" > {{ message }}</li>
+        </div>
+        {% endfor %}
         <div class="wr-input-container">
             <div class="text-xl md:text-4xl text-center font-bold  mt-4  text-wr-blue mb-8"> {% trans 'Upload Evidence' %}</div>
             <div class="text-lg my-4">For report : {{report}}</div>

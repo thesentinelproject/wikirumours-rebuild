@@ -6,7 +6,9 @@ from datetime import timedelta
 from heapq import heappush, nlargest
 from itertools import combinations
 
+import magic
 from actstream import action
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import Point
 from django.core.paginator import Paginator
@@ -49,7 +51,10 @@ from .utils import get_tags_from_title, get_location_array
 # Create your views here.
 def index(request):
     domain = Domain.objects.filter(domain=request.get_host()).first()
-    reports = Report.objects.filter(domain=domain).annotate(count=Count("sighting"))
+    reports = Report.objects.annotate(count=Count("sighting"))
+
+    if not domain.is_root_domain:
+        reports = reports.filter(domain=domain)
 
     # filters
     search_term = request.GET.get("search_term")
@@ -72,11 +77,11 @@ def index(request):
     sort_by = request.GET.get("sort_by")
 
     if sort_by == "most_sighted":
-        reports = reports.filter(domain=domain).annotate(count=Count("sighting")).order_by("-count")
+        reports = reports.annotate(count=Count("sighting")).order_by("-count")
     elif sort_by == "recently_occurred":
-        reports = reports.filter(domain=domain).order_by('-occurred_on')
+        reports = reports.order_by('-occurred_on')
     else:
-        reports = reports.filter(domain=domain).order_by('-updated_at')
+        reports = reports.order_by('-updated_at')
 
     # filter form
     form = ReportFilterForm(request.GET)
@@ -181,7 +186,11 @@ class ReportViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         domain = Domain.objects.filter(domain=request.get_host()).first()
-        queryset = Report.objects.filter(domain=domain)
+        queryset = Report.objects.all()
+
+        if not domain.is_root_domain:
+            queryset = queryset.filter(domain=domain)
+
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -406,8 +415,10 @@ def check_report_presence(request):
             base_query = base_query | Q(Q(title__icontains=combination[0]) & Q(title__icontains=combination[1]))
 
         domain = Domain.objects.filter(domain=request.get_host()).first()
-        matching_reports = Report.objects.filter(domain=domain)
-        matching_reports = matching_reports.filter(base_query)
+        matching_reports = Report.objects.filter(base_query)
+
+        if not domain.is_root_domain:
+            matching_reports = matching_reports.filter(domain=domain)
 
     if matching_reports is None or matching_reports.count() == 0:
         report_form_initial = {"title": title, "tags": ','.join(get_tags_from_title(title))}
@@ -508,7 +519,7 @@ def create_report(request):
         error_message = "Please make sure to select a location."
         if not report_location_data:
             report_form.add_error('location', error_message)
-        if not report_location_data:
+        if not sighting_location_data:
             sighting_form.add_error('location', error_message)
 
         if report_form.is_valid() and sighting_form.is_valid():
@@ -546,7 +557,6 @@ def create_report(request):
 
             if not sighting.reported_via:
                 reported_via_internet = ReportedViaChoice.objects.filter(name="Internet").first()
-                print(reported_via_internet)
                 if reported_via_internet:
                     sighting.reported_via = reported_via_internet
 
@@ -569,20 +579,34 @@ def create_report(request):
 @login_required
 def create_sighting(request, report_public_id=None):
     if request.method == "POST":
-        form = AddSightingForm(request.POST)
+        if request.user.role == User.END_USER:
+            form = EndUserSightingForm(request.POST)
+        else:
+            form = AddSightingForm(request.POST)
         report = Report.objects.filter(public_id=report_public_id).first()
         locator = Nominatim(user_agent="wikirumours")
-        sighting_location = re.split(r"[()\s]", request.POST.get("sighting-location"))
-        sighting_latlong = "{},{}".format(sighting_location[3], sighting_location[2])
-        try:
-            sighting_address = locator.reverse(sighting_latlong)
-        except Exception:
-            sighting_address = sighting_latlong
+        sighting_location_data = request.POST.get("sighting-location", None)
+        error_message = "Please make sure to select a location."
+        if not sighting_location_data:
+            form.add_error('location', error_message)
+
         if form.is_valid():
+            sighting_location = re.split(r"[()\s]", sighting_location_data)
+            sighting_latlong = "{},{}".format(sighting_location[3], sighting_location[2])
+            try:
+                sighting_address = locator.reverse(sighting_latlong)
+            except Exception:
+                sighting_address = sighting_latlong
             sighting = form.save(commit=False)
             sighting.report = report
             sighting.user = request.user
             sighting.address = sighting_address
+
+            if not sighting.reported_via:
+                reported_via_internet = ReportedViaChoice.objects.filter(name="Internet").first()
+                if reported_via_internet:
+                    sighting.reported_via = reported_via_internet
+
             sighting.save()
 
             action.send(
@@ -591,12 +615,10 @@ def create_sighting(request, report_public_id=None):
                 action_object=sighting,
                 target=report
             )
-            # TODO
-            # action for add report edit report 
             return redirect(reverse("index"))
         else:
             context = {
-                "form": form,
+                "sighting_form": form,
                 "report": report,
                 "report_public_id": report.public_id,
             }
@@ -606,7 +628,11 @@ def create_sighting(request, report_public_id=None):
 def reports_and_sightings(request, report_public_id):
     user = request.user
     domain = Domain.objects.filter(domain=request.get_host()).first()
-    report_to_view = Report.objects.filter(public_id=report_public_id, domain=domain).first()
+    if domain.is_root_domain:
+        report_to_view = Report.objects.filter(public_id=report_public_id).first()
+    else:
+        report_to_view = Report.objects.filter(public_id=report_public_id, domain=domain).first()
+
     if report_to_view is not None:
         first_sighting_report = Sighting.objects.filter(
             report=report_to_view, is_first_sighting=True
@@ -763,10 +789,15 @@ def show_comment(request, comment_id):
 def my_activity(request):
     domain = Domain.objects.filter(domain=request.get_host()).first()
 
-    reports = Report.objects.filter(domain=domain, reported_by=request.user)
+    reports = Report.objects.filter(reported_by=request.user)
     sightings = Sighting.objects.filter(
-        user=request.user, is_first_sighting=False, report__domain=domain
+        user=request.user, is_first_sighting=False
     )
+
+    if not domain.is_root_domain:
+        reports = reports.filter(domain=domain)
+        sightings = sightings.filter(report__domain=domain)
+
     watchlisted_reports = Report.objects.filter(watchlistedreport__user=request.user, domain=domain).order_by(
         '-watchlistedreport__created_at')
     watchlisted_reports_paginator = Paginator(watchlisted_reports, 10)
@@ -808,10 +839,18 @@ def edit_report(request, report_public_id=None):
     elif user_role == User.ADMIN or user_role == User.MODERATOR:
 
         report_form = AdminReportForm(instance=report)
-        report_form.fields["assigned_to"].queryset = User.objects.filter(
-            role__in=[User.COMMUNITY_LIAISON, User.MODERATOR, User.ADMIN],
-            role_domains=Domain.objects.filter(domain=request.get_host()).first(),
-        )
+        # if assigned to, show current user also even if it is not a valid choice to select.
+        if report.assigned_to:
+            report_form.fields["assigned_to"].queryset = User.objects.filter(
+                Q(role__in=[User.COMMUNITY_LIAISON, User.MODERATOR, User.ADMIN],
+                  role_domains=Domain.objects.filter(domain=request.get_host()).first()) |
+                Q(id=report.assigned_to.id)
+            )
+        else:
+            report_form.fields["assigned_to"].queryset = User.objects.filter(
+                role__in=[User.COMMUNITY_LIAISON, User.MODERATOR, User.ADMIN],
+                role_domains=Domain.objects.filter(domain=request.get_host()).first()
+            )
 
         sighting_form = AddSightingForm(instance=sighting)
 
@@ -872,7 +911,6 @@ def update_report(request, report_public_id=None):
             context = {"report": report, "report_form": report_form, "sighting_form": sighting_form}
             return render(request, "report/edit_report.html", context)
 
-        report.domain = domain
         report.reported_by = request.user
         report.recently_edited_by = request.user
         report.address = report_address
@@ -908,14 +946,21 @@ def report_evidence(request, report_public_id=None):
     else:
         context = {"report": report}
 
-        for file in request.FILES.getlist('evidence_files'):
-            # save each file for report
-            evidence_file = EvidenceFile(
-                report=report,
-                uploader=request.user,
-                file=file
-            )
-            evidence_file.save()
+        for uploaded_file in request.FILES.getlist('evidence_files'):
+
+            # cehck if each file is valid. if valid save else add error message
+            mimetype = magic.from_buffer(uploaded_file.read(), mime=True)
+            if not ("image" in mimetype) and not "pdf" in mimetype:
+                messages.add_message(request, messages.ERROR,
+                                     f"Please upload an image or a pdf only. Invalid file - {uploaded_file}")
+            else:
+                # save each file for report
+                evidence_file = EvidenceFile(
+                    report=report,
+                    uploader=request.user,
+                    file=uploaded_file
+                )
+                evidence_file.save()
         return render(request, "report/report_evidence.html", context=context)
 
 
@@ -986,29 +1031,17 @@ def update_sighting(request, sighting_id=None):
 @login_required
 def my_task(request):
     domain = Domain.objects.filter(domain=request.get_host()).first()
-    reports = request.user.get_tasks(domain)
+
+    if not domain.is_root_domain:
+        reports = request.user.get_tasks(domain)
+    else:
+        reports = request.user.get_tasks()
+
     paginator = Paginator(reports, 20)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     context = {"page_obj": page_obj, "reports": page_obj.object_list}
     return render(request, "report/my_task.html", context)
-
-
-def search_report(request):
-    keyword = request.POST.get("keyword")
-    if keyword:
-        reports = Report.objects.filter(title__icontains=keyword)
-        paginator = Paginator(reports, 5)
-        page_number = request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
-        context = {
-            "page_obj": page_obj,
-            "reports": page_obj.object_list,
-            "keyword": keyword,
-        }
-        return TemplateResponse(request, "report/reports.html", context)
-    else:
-        return TemplateResponse(request, "report/reports.html")
 
 
 @login_required
@@ -1061,14 +1094,19 @@ def statistics_data(request):
     end_date = request.GET.get("end_date", None)
 
     # get reports matching domain and dates
+
+    all_sightings = Sighting.objects.order_by('-heard_on')
+    all_reports = Report.objects.order_by('-occurred_on')
+
     if not start_date and not end_date:
-        all_sightings = Sighting.objects.filter(report__domain=domain).order_by('-heard_on')
-        all_reports = Report.objects.filter(domain=domain).order_by('-occurred_on')
+        pass
     else:
-        all_sightings = Sighting.objects.filter(report__domain=domain, heard_on__gte=start_date,
-                                                heard_on__lte=end_date).order_by('-heard_on')
-        all_reports = Report.objects.filter(domain=domain, occurred_on__gte=start_date,
-                                            occurred_on__lte=end_date).order_by('-occurred_on')
+        all_sightings = all_sightings.filter(heard_on__gte=start_date, heard_on__lte=end_date)
+        all_reports = Report.objects.filter(occurred_on__gte=start_date, occurred_on__lte=end_date)
+
+    if not domain.is_root_domain:
+        all_sightings = all_sightings.filter(report__domain=domain)
+        all_reports = all_reports.filter(domain=domain)
 
     status = request.GET.get("status")
     if status:

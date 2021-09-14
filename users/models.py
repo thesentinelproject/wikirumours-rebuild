@@ -67,6 +67,9 @@ class User(AbstractUser):
 
     enable_email_reminders = models.BooleanField(default=False,
                                                  help_text="Enable email reminders for overdue tasks for this user (irrelevant in case of end users).")
+
+    enable_email_notifications = models.BooleanField(default=False,
+                                                 help_text="Enable email notificiations for new reports for this user (irrelevant in case of end users).")
     api_post_access = models.BooleanField(default=False, help_text="Allowed to create POST requests via API")
 
     watchlisted_reports = models.ManyToManyField(Report, blank=True)
@@ -107,7 +110,7 @@ class User(AbstractUser):
 
         # reports = reports.filter(Q(resolution__isnull=True) | Q(resolution=""))
         reports = reports.filter(Q(status__name__icontains='new') | Q(status__name__icontains='investigat'))
-        if domain:
+        if domain and not domain.is_root_domain:
             reports = reports.filter(domain=domain)
 
         return reports

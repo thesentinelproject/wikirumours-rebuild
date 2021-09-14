@@ -24,6 +24,7 @@ def import_master_tables():
 
 def import_countries():
     with transaction.atomic():
+
         lines = [
             ("AF", "Afghanistan"),
             ("AL", "Albania"),
@@ -168,16 +169,15 @@ def import_countries():
             ("SC", "Seychelles"),
             ("SL", "Sierra Leone"),
             ("SG", "Singapore"),
-            (
-                "SK",
-                "Slovak Republic",
-            ),
+            ("SK", "Slovak Republic"),
             ("SI", "Slovenia"),
             ("SB", "Solomon Islands"),
             ("ZA", "South Africa"),
             ("ES", "Spain"),
             ("LK", "Sri Lanka"),
+            ("SO", "Somalia"),
             ("SD", "Sudan"),
+            ("SS", "South Sudan"),
             ("SR", "Suriname"),
             ("SZ", "Eswatini (Swaziland)"),
             ("SE", "Sweden"),
@@ -199,10 +199,10 @@ def import_countries():
             ("US", "United States"),
             ("UY", "Uruguay"),
             ("VE", "Venezuela, RB"),
+            ("VN", "Vietnam"),
             ("ZM", "Zambia"),
             ("ZW", "Zimbabwe"),
         ]
-
         for line in lines:
 
             country = Country.objects.filter(iso_code=line[0]).first()

@@ -98,3 +98,4 @@ zipp==3.4.0
 django-activity-stream==0.10.0
 django-colorfield==0.4.1
 django-loginas==0.3.9
+python-magic==0.4.24

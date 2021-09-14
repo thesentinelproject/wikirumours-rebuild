@@ -2,13 +2,22 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block main_project %}
+{% block extra_header%}
+{% if cms_page.css_content|safe %}
 <style>
     {{cms_page.css_content|safe}}
 </style>
+{% endif %}
+
+{% if cms_page.js_content|safe %}
 <script>
     {{cms_page.js_content|safe}}
 </script>
+{% endif %}
+
+{% endblock %}
+
+{% block main_project %}
 <div class="p-8 dark:text-white dark:bg-wr-grey-dark mt-8">
     <div class="justify-center">
         {{cms_page.html_content|safe}}

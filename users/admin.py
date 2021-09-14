@@ -1,5 +1,6 @@
 from django.contrib.auth.admin import UserAdmin
 from django.contrib import admin
+from django.contrib.auth.models import Group
 
 from .forms import CustomUserCreationForm
 from .models import User, BlacklistedIP
@@ -29,6 +30,7 @@ class CustomUserAdmin(UserAdmin):
                     "role",
                     "role_domains",
                     "enable_email_reminders",
+                    "enable_email_notifications",
                     "sign_up_domain",
                     "phone_number",
                     "api_key",
@@ -48,3 +50,4 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(BlacklistedIP)
+admin.site.unregister(Group)

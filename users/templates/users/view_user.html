@@ -78,7 +78,7 @@
             {% trans 'Sightings added by user' %}
         </div>
         {% with sightings=sightings page_obj=page_obj page_query="sightings_page"%}
-        {% include 'report/sighting_table.html' %}
+        {% include 'report/report_sighting_table.html' %}
         {% endwith %}
         {% endif %}
 

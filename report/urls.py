@@ -24,7 +24,6 @@ urlpatterns = [
     ),
     path("my-activity", views.my_activity, name="my-activity"),
     path("my-task", views.my_task, name="my-task"),
-    path("search_report", views.search_report, name="search_report"),
     path("add_comment", views.add_comment, name="add_comment"),
     path("delete_comment/<comment_id>", views.delete_comment, name="delete_comment"),
     path("view_report/<report_public_id>/comments/", views.comments, name="comments"),
