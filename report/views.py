@@ -871,7 +871,7 @@ def update_report(request, report_public_id=None):
     user_role = request.user.role
     report = Report.objects.filter(public_id=report_public_id).first()
     sighting = Sighting.objects.filter(
-        report=report_public_id, is_first_sighting=True
+        report__public_id=report_public_id, is_first_sighting=True
     ).first()
     domain = Domain.objects.filter(domain=request.get_host()).first()
 
@@ -911,7 +911,6 @@ def update_report(request, report_public_id=None):
             context = {"report": report, "report_form": report_form, "sighting_form": sighting_form}
             return render(request, "report/edit_report.html", context)
 
-        report.reported_by = request.user
         report.recently_edited_by = request.user
         report.address = report_address
         report.save()
@@ -1008,7 +1007,6 @@ def update_sighting(request, sighting_id=None):
 
         if sighting_form.is_valid():
             sighting = sighting_form.save(commit=False)
-            sighting.user = request.user
             sighting.address = sighting_address
             sighting.save()
 
