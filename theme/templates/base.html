@@ -45,12 +45,12 @@
             {% if request.domain.logo %}
             <a href="{% url 'home' %}">
                 <img src="{{ request.domain.logo.url }}"
-                     class="h-12 w-44 object-contain"/>
+                     class="h-12 w-11/12 object-contain"/>
             </a>
             {% else %}
             <a href="{% url 'home' %}">
                 <img src="{% static 'wikirumours_logo.png' %}"
-                     class="h-12 w-44 object-contain"/>
+                     class="h-12 w-11/12 object-contain"/>
             </a>
             {% endif %}
         </div>
@@ -68,12 +68,12 @@
                         {% if request.domain.logo %}
                         <a href="{% url 'home' %}">
                             <img src="{{ request.domain.logo.url }}"
-                                 class="h-12 w-44 object-contain"/>
+                                 class="h-12 w-11/12 object-contain"/>
                         </a>
                         {% else %}
                         <a href="{% url 'home' %}">
                             <img src="{% static 'wikirumours_logo.png' %}"
-                                 class="h-12 w-44 object-contain"/>
+                                 class="h-12 w-11/12 object-contain"/>
                         </a>
                         {% endif %}
                     </div>
