@@ -23,7 +23,7 @@
         </div>
         <div class="blue-links text-right">
             <a target="_blank" href="{%url report|admin_urlname:'change' report.id %}">
-                Open in admin
+                Open in Admin
             </a>
         </div>
         <form method="post" action="{% url 'update_report' report_public_id=report.public_id%}"
@@ -55,7 +55,7 @@
 
 
 
-            <div class="text-md md:text-2xl text-center font-bold text-wr-blue mt-8">{% trans 'Add more information about report Sighting' %}
+            <div class="text-md md:text-2xl text-center font-bold text-wr-blue mt-8">{% trans 'Add more information about report sighting' %}
             </div>
             <div class="rounded px-8 md:px-12 py-8 md:py-12 mt-4 flex flex-col dark:bg-wr-grey-dark bg-white">
                 {%for field in sighting_form %}
