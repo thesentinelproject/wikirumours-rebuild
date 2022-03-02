@@ -1,8 +1,13 @@
 from django.contrib import admin
-
-# Register your models here.
-
-
 from .models import Country
 
-admin.site.register(Country)
+
+class CountryAdmin(admin.ModelAdmin):
+    list_display = ['name','iso_code',]
+    search_fields = ['name','iso_code',]
+
+
+    class Meta:
+        model = Country
+
+admin.site.register(Country,CountryAdmin)

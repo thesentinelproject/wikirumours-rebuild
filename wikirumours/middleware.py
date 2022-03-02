@@ -2,6 +2,8 @@ from django.http import HttpResponseForbidden
 
 from report.models import Domain, CMSPage
 from users.models import User, BlacklistedIP
+from logs.utils import get_client_ip
+
 
 
 class DomainCheckMiddleware:
@@ -50,11 +52,12 @@ class DomainCheckMiddleware:
 class BlacklistIPMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
-        # One-time configuration and initialization.
-
+       
     def __call__(self, request):
-        if BlacklistedIP.objects.filter(ip_address=request.META['REMOTE_ADDR']).exists():
+        if BlacklistedIP.objects.filter(ip_address=get_client_ip(request),is_whitelisted=False).exists():
             return HttpResponseForbidden()
-
         response = self.get_response(request)
         return response
+
+
+

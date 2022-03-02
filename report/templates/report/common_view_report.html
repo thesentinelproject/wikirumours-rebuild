@@ -114,7 +114,14 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="md:flex text-center mx-auto mx-4 justify-center py-8">
+            <style>
+                .prevent_overflow {        
+                    width: 700px;
+                    word-break: break-all;
+                    white-space: normal;
+                }
+            </style>
+            <div class="prevent_overflow md:flex text-center mx-auto mx-4 justify-center py-8">
                 {% if report.resolution%}
                 <div class="block md:text-xl dark:text-white">
                     {{report.resolution|urlize}}
@@ -167,13 +174,12 @@
                     {{comments_count|default:""}} {% trans 'Comments' %}
                 </div>
 
-                {% if user.role == 'Community Liaison' and user == report.assigned_to or user.role == 'Moderator' or user.role == 'Admin' %}
+                {% if edit_permission %}
                 <div class="action-button-ter mx-2 my-2" onclick="window.location='{% url 'edit_report' report_public_id=report.public_id %}'">
                     {% trans 'Edit' %}
                 </div>
                 {% endif %}
             </div>
-
         </div>
     </div>
 </div>
@@ -185,3 +191,5 @@
         form.submit()
     }
 </script>
+
+

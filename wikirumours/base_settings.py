@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 import dotenv  # <- New
-
+from django.contrib.admin.sites import  AdminSite
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,16 +29,16 @@ if os.path.isfile(dotenv_file):
 SECRET_KEY = "@epowvb!ug_d9*65*86f-es4j94uvj-25tm6myp_g98yi8t=2j"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "localhost",
+    "*",
     "a.localhost",
     "b.localhost",
 ]
 
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -62,9 +62,10 @@ INSTALLED_APPS = [
     "drf_yasg",
     "admin_auto_filters",
     "taggit_selectize",
-    "users.apps.WikirumoursActStreamConfig",
     "colorfield",
     "loginas",
+    'dbbackup',
+    'logs'
 ]
 
 MIDDLEWARE = [
@@ -199,3 +200,39 @@ EMAIL_USE_SSL = True
 
 DATETIME_FORMAT = 'N j Y P'
 DATE_FORMAT = 'N j Y P'
+
+
+
+CELERY_BROKER_URL = 'redis://'+os.environ.get("REDIS_IP", "")+':6379'
+CELERY_RESULT_BACKEND = 'redis://'+os.environ.get("REDIS_IP", "")+':6379'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['json', 'application/text']
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 100
+
+
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': os.path.join(BASE_DIR, '../backups')}
+
+
+from celery.schedules import crontab
+CELERY_BEAT_SCHEDULE = {
+    'regular-database-backup': {
+        'task': 'users.tasks.regular_database_backup',
+        'schedule': crontab(minute=55, hour=23),
+    },
+}
+
+AdminSite.enable_nav_sidebar = True
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'cache_table',
+    }
+}
+
+MAX_ALLOWED_HITS_PER_IP = 5 
+IP_HITS_TIMEOUT = 30  

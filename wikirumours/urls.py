@@ -26,13 +26,19 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.conf.urls.i18n import i18n_patterns
-
 from report.views import content_page
 from users.views import logout_user
+from users.views import handler404,handler500
+
+
+handler404 = handler404
+handler500 = handler500
 
 AdminSite.site_header = 'Settings'
 AdminSite.site_title = 'Settings'
 AdminSite.index_title = ''
+
+
 
 schema_view = get_schema_view(
     openapi.Info(

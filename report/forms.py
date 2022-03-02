@@ -191,6 +191,7 @@ class AddSightingForm(ModelForm):
         }
 
 
+
 class AdminReportForm(AddReportForm):
     class Meta(AddReportForm.Meta):
         fields = (
@@ -249,6 +250,7 @@ class AdminReportForm(AddReportForm):
                 }
             ),
         }
+
 
 
 class CommunityLiaisonForm(AdminReportForm):

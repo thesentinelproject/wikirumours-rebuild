@@ -12,3 +12,4 @@ class Country(models.Model):
     class Meta:
         verbose_name_plural = "countries"
         ordering = ["name"]
+

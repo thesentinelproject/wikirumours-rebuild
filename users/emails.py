@@ -1,13 +1,15 @@
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.contrib.sites.shortcuts import get_current_site
+
 
 
 def account_verification_email(request, token, email):
     to = email
     link = (
         "http://"
-        + request.get_host()
+        + get_current_site(request).domain
         + reverse("account_verification", kwargs={"token": token})
     )
     text_content = render_to_string("emails/account_verification.txt", {"link": link})
@@ -23,11 +25,12 @@ def account_verification_email(request, token, email):
     return None
 
 
+
 def forgot_password_verification(request, token, email):
     to = email
     link = (
         "http://"
-        + request.get_host()
+        + get_current_site(request).domain
         + reverse("reset_password", kwargs={"token": token})
     )
     text_content = render_to_string("emails/forgot_password_verification.txt", {"link": link})
@@ -87,3 +90,17 @@ def new_report_alert(report):
     return None
 
 
+
+def api__key_email(request, email):
+    to = email
+    text_content = render_to_string("emails/api_key.txt", {})
+    html_content = render_to_string("emails/api_key.html", {})
+    send_mail(
+        'Wikirumours Api Key Generation Alert',
+        text_content,
+        'support@wikirumours.org',
+        [to],
+        fail_silently=False,
+        html_message=html_content
+    )
+    return None

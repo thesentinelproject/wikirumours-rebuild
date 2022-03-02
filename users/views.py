@@ -9,11 +9,23 @@ from django.http import HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.crypto import get_random_string
-
 from report.models import Domain, Report, Sighting, Comment
 from users.models import User, AccountActivationToken
-from .emails import account_verification_email, forgot_password_verification
+from .emails import account_verification_email, forgot_password_verification, api__key_email
 from .forms import LoginForm, SignUpForm, ForgotPasswordForm, EditProfileForm
+from django.contrib.sites.shortcuts import get_current_site
+from logs.utils import *
+from .utils import *
+
+
+def handler404(request,exception):
+    return render(request, 'users/error404.html', status=404)
+	
+
+
+def handler500(request,*args, **argv):
+    return render(request, 'users/error500.html', status=500)
+
 
 
 def _generate_api_key():
@@ -25,7 +37,9 @@ def home_page(request):
 
 
 def logout_user(request):
-    if request.user:
+    if request.user.is_authenticated:
+        log_data = {'ip_address':get_client_ip(request),'user':request.user,'action':'Sign Out',}
+        create_user_log(log_data)
         logout(request)
         return redirect(reverse("login"))
     return redirect(reverse("login"))
@@ -40,15 +54,15 @@ def login_user(request):
             return render(request, "users/login.html", {"form": form})
     if request.method == "POST":
         form = LoginForm(request.POST)
-
         if form.is_valid():
             username = request.POST["username"]
             password = request.POST["password"]
             user = authenticate(request, username=username, password=password)
-
             if user is not None:
                 if user.is_verified:
                     login(request, user)
+                    log_data = {'ip_address':get_client_ip(request),'user':user,'action':'Sign In',}
+                    create_user_log(log_data)
                     return redirect(reverse("index"))
                 else:
                     account = AccountActivationToken()
@@ -57,6 +71,7 @@ def login_user(request):
                     account_verification_email(request, account.token, user.email)
                     return redirect(reverse("email_sent"))
             else:
+                check_ip(request)
                 messages.error(request, "Invalid username or password")
                 return render(request, "users/login.html", {"form": form})
         else:
@@ -77,8 +92,12 @@ def sign_up(request):
             email = request.POST.get("email")
             password = request.POST.get("password")
             phone_number = request.POST.get("phone_number")
-            host = request.get_host()
-            domain = Domain.objects.filter(domain=host).first()
+            request_domain = get_current_site(request).domain
+            domain_query = Domain.objects.filter(domain=request_domain)
+            if domain_query.exists():
+                domain = domain_query.first()
+            else:
+                domain = Domain.objects.all().first()
             User.objects.create_user(
                 username=username,
                 email=email,
@@ -94,6 +113,7 @@ def sign_up(request):
             account_verification_email(request, account.token, email)
             return redirect(reverse("email_sent"))
         else:
+            check_ip(request)
             return render(request, "users/sign_up.html", {"form": form})
 
 
@@ -134,6 +154,7 @@ def forgot_password(request):
                 forgot_password_verification(request, account.token, email)
                 return redirect(reverse("email_sent"))
             else:
+                check_ip(request)
                 form.add_error("email", 'No account exists with that email address')
                 return render(request, "users/forgot_password.html", {"form": form})
         else:
@@ -179,6 +200,8 @@ def reset_password_post(request):
                 )
                 return redirect(reverse("reset_password", kwargs={"token": token}))
             else:
+                log_data = {'ip_address':get_client_ip(request),'user':user,'action':'Password Change',}
+                create_user_log(log_data)
                 user.set_password(request.POST.get("password"))
                 user.save()
                 messages.success(
@@ -187,12 +210,17 @@ def reset_password_post(request):
                 return redirect(reverse("login"))
 
 
+
 @login_required
 def generate_api_key(request):
     user = request.user
     user.api_key = _generate_api_key()
     user.save()
+    api__key_email(request, user.email)
+    log_data = {'ip_address':get_client_ip(request),'user':user,'action':'Generate API Key',}
+    create_user_log(log_data)
     return redirect(reverse('user_profile'))
+
 
 
 @login_required
@@ -233,10 +261,13 @@ def toggle_dark_mode(request):
 
 def view_user(request, username):
     user = get_object_or_404(User, username=username)
-    domain = Domain.objects.filter(domain=request.get_host()).first()
-
+    request_domain = get_current_site(request).domain
+    domain_query = Domain.objects.filter(domain=request_domain)
+    if domain_query.exists():
+        domain = domain_query.first()
+    else:
+        domain = Domain.objects.all().first()
     tab = request.GET.get('tab', None)
-
     reports = Report.objects.filter(reported_by=user).order_by('-updated_at')
     sightings = Sighting.objects.filter(user=user).order_by('-updated_at')
     comments = Comment.objects.filter(user=user).order_by('-updated_at')
@@ -244,11 +275,9 @@ def view_user(request, username):
         reports = reports.filter(domain=domain)
         sightings = sightings.filter(report__domain=domain)
         comments = comments.filter(report__domain=domain)
-
     number_of_reports = reports.count()
     number_of_sightings = sightings.count()
     number_of_comments = comments.count()
-
     context = {
         'user': user,
         'number_of_reports': number_of_reports,
@@ -294,6 +323,8 @@ def update_profile(request):
 
     if edit_user_form.is_valid():
         edit_user_form.save()
+        log_data = {'ip_address':get_client_ip(request),'user':request.user,'action':'Update User Profile',}
+        create_user_log(log_data)
         return redirect(reverse("user_profile"))
 
     else:

@@ -46,8 +46,20 @@ class CustomUserAdmin(UserAdmin):
     )
 
     exclude = ['user_permissions']
+    list_display = ['username','email','phone_number','first_name','last_name','is_staff','date_joined','sign_up_domain','address','country','role','last_login',]
+    search_fields = ['username','first_name','last_name','email','phone_number','sign_up_domain__domain','sign_up_domain__name','api_key','address','country__name','location','role']
 
+
+class BlacklistedIPAdmin(admin.ModelAdmin):
+    list_display = ['id','ip_address','is_whitelisted','created_at']
+    list_display_links = ["id"]
+    list_filter = ['is_whitelisted','created_at']
+    date_hierarchy = 'created_at'
+    search_fields = ['ip_address']
 
 admin.site.register(User, CustomUserAdmin)
-admin.site.register(BlacklistedIP)
+admin.site.register(BlacklistedIP,BlacklistedIPAdmin)
 admin.site.unregister(Group)
+
+
+

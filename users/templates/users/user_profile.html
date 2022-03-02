@@ -17,7 +17,6 @@
                 Toggle Theme
             </button>
             </form>
-
         </div>
     </div>
 
@@ -92,7 +91,7 @@
                                     {% if not user.api_key %}
                                     Api key has not been generated.
                                     {% else %}
-                                    ***********
+                                    {{user.api_key}}
                                     {% endif %}
                                     {% csrf_token %}
                                     <button type="submit" class="action-button-snd">

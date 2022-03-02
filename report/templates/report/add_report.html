@@ -14,9 +14,10 @@
             </div>
 
             <div class="rounded px-8 md:px-12 py-8 md:py-12 mt-4 flex flex-col bg-wr-shadow dark:bg-wr-grey-dark">
-                {%csrf_token%}
+
+                {% csrf_token %}
                 {{report_form.media}}
-                {%for field in report_form %}
+                {% for field in report_form %}
                 {% if field.help_text %}
                 <div class="flex flex-row items-center ">
                     <div class="text-xs md:text-md text-wr-grey dark:text-white font-bold px-1">{{field.label}}</div>
@@ -32,6 +33,9 @@
                 <div class="text-red-600 py-2 font-bold">{{field.errors}}</div>
                 {% endfor %}
 
+                {% if report_form.non_field_errors %}
+                <div class="text-red-600 py-2 md:font-extrabold">{{ report_form.non_field_errors }}</div>
+                {% endif %}
 
             </div>
             <br />
@@ -39,7 +43,12 @@
                 {% trans 'Add more information about report sighting'%}
             </div>
             <div class="rounded px-8 md:px-12 py-8 md:py-12 mt-4 flex flex-col bg-wr-shadow dark:bg-wr-grey-dark">
-                {%for field in sighting_form %}
+
+                {% if sighting_form.non_field_errors %}
+                    <div class="text-red-600 py-2 md:font-extrabold">{{ sighting_form.non_field_errors }}</div>
+                {% endif %}
+
+                {% for field in sighting_form %}
                 {% if field.help_text %}
                 <div class="flex flex-row items-center ">
                     <div class="text-xs md:text-md text-wr-grey dark:text-white font-bold px-1">{{field.label}}</div>

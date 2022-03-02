@@ -73,16 +73,17 @@ def get_tags_from_title(title):
 def get_location_array(sightings):
     location_array = [["Lat", "Long", "type", "Marker", "extra"]]
     for sighting in sightings:
-        location = sighting.location.tuple if sighting.location else None
+        report = sighting.report
+        location = report.location.tuple if report.location else None
         if not location:
             continue
         if sighting.is_first_sighting:
             location_array.append(
-                [location[1], location[0], '{} - heard on {}'.format(sighting.address, sighting.heard_on.strftime("%d %B %Y")), "red", sighting.heard_on.strftime("%Y-%m-%d")]
+                [location[1], location[0], '{} - heard on {}'.format(report.address, sighting.heard_on.strftime("%d %B %Y")), "red", sighting.heard_on.strftime("%Y-%m-%d")]
             )
         else:
             location = sighting.location.tuple
             location_array.append(
-                [location[1], location[0], '{} - heard on {}'.format(sighting.address, sighting.heard_on.strftime("%d %B %Y")), "blue", sighting.heard_on.strftime("%Y-%m-%d")]
+                [location[1], location[0], '{} - heard on {}'.format(report.address, sighting.heard_on.strftime("%d %B %Y")), "blue", sighting.heard_on.strftime("%Y-%m-%d")]
             )
     return location_array

@@ -7,7 +7,6 @@ from heapq import heappush, nlargest
 from itertools import combinations
 
 import magic
-from actstream import action
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import Point
@@ -45,16 +44,22 @@ from .forms import (
 from .models import Report, Domain, Sighting, Comment, FlaggedComment, WatchlistedReport, CMSPage, ReportedViaChoice, \
     EvidenceFile
 from .serializers import ReportSerializer, SightingSerializer
-from .utils import get_tags_from_title, get_location_array
+from .utils import get_tags_from_title, get_location_array 
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.context_processors import csrf
+from logs.utils import *
+
 
 
 # Create your views here.
 def index(request):
-    domain = Domain.objects.filter(domain=request.get_host()).first()
+    request_domain = get_current_site(request).domain
     reports = Report.objects.annotate(count=Count("sighting"))
-
-    if not domain.is_root_domain:
-        reports = reports.filter(domain=domain)
+    domain_query = Domain.objects.filter(domain=request_domain)
+    if domain_query.exists():
+        domain = domain_query.first()
+        if not domain.is_root_domain:
+            reports = reports.filter(domain=domain)
 
     # filters
     search_term = request.GET.get("search_term")
@@ -124,8 +129,12 @@ class ReportViewSet(viewsets.ModelViewSet):
         # check if user is permitted to make POST requests
         if not user.api_post_access:
             return HttpResponseForbidden("You have insufficient permissions")
-
-        domain = Domain.objects.filter(domain=request.get_host()).first()
+        request_domain = get_current_site(request).domain
+        domain_query = Domain.objects.filter(domain=request_domain)
+        if domain_query.exists():
+            domain = domain_query.first()
+        else:
+            domain = Domain.objects.all().first()
         latlong = None
         report_address = None
         locator = Nominatim(user_agent="wikirumours")
@@ -179,13 +188,19 @@ class ReportViewSet(viewsets.ModelViewSet):
                 location=latlong_sighting,
                 address=sighting_address,
             )
-
+        log_data = {'ip_address':get_client_ip(request),'user':user,'action':'Create Report','report':report}
+        create_user_log(log_data)
         headers = self.get_success_headers(sighting_serializer.data)
         data = {"report": serializer.data}
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
     def list(self, request, *args, **kwargs):
-        domain = Domain.objects.filter(domain=request.get_host()).first()
+        request_domain = get_current_site(request).domain
+        domain_query = Domain.objects.filter(domain=request_domain)
+        if domain_query.exists():
+            domain = domain_query.first()
+        else:
+            domain = Domain.objects.all().first()
         queryset = Report.objects.all()
 
         if not domain.is_root_domain:
@@ -269,6 +284,8 @@ class ReportViewSet(viewsets.ModelViewSet):
                     sighting_serializer.save(country=sighting_country)
             headers = self.get_success_headers(serializer.data)
             # data = {'report': serializer.data, 'sighting': sighting_serializer.data}
+            log_data = {'ip_address':get_client_ip(request),'user':user,'action':'Update Report','report':report,'sighting':sighting}
+            create_user_log(log_data)
             return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
         else:
             return Response(
@@ -324,13 +341,17 @@ class SightingViewSet(viewsets.ModelViewSet):
             except Exception:
                 sighting_address = sighting_latlong
         if serializer.is_valid(raise_exception=True):
-            serializer.save(
+            sighting = serializer.save(
                 user=user,
                 report=report,
                 is_first_sighting=False,
                 location=latlong,
                 address=sighting_address,
             )
+        else:
+            sighting = None
+        log_data = {'ip_address':get_client_ip(request),'user':user,'action':'Create Sighting','report':report,'sighting':sighting}
+        create_user_log(log_data)
         headers = self.get_success_headers(serializer.data)
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
@@ -366,7 +387,7 @@ class SightingViewSet(viewsets.ModelViewSet):
                     sighting_country = Country.objects.filter(
                         iso_code=request.data.get("country")
                     ).first()
-                    serializer.save(
+                    sighting = serializer.save(
                         country=sighting_country,
                         location=latlong,
                         address=sighting_address,
@@ -376,8 +397,10 @@ class SightingViewSet(viewsets.ModelViewSet):
                     sighting_country = Country.objects.filter(
                         iso_code=request.data.get("country")
                     ).first()
-                    serializer.save(country=sighting_country)
+                    sighting = serializer.save(country=sighting_country)
             headers = self.get_success_headers(serializer.data)
+            log_data = {'ip_address':get_client_ip(request),'user':user,'action':'Update Sighting','report':sighting.report,'sighting':sighting}
+            create_user_log(log_data)
             return Response(
                 serializer.data, status=status.HTTP_201_CREATED, headers=headers
             )
@@ -393,9 +416,11 @@ def new_report(request):
     return render(request, "report/new_report.html")
 
 
+
 @login_required
 def check_report_presence(request):
     title = request.POST["title"]
+    request_domain = get_current_site(request).domain
 
     if title == "":
         error_msg = ugettext_lazy("Title of report cannot be empty")
@@ -413,8 +438,11 @@ def check_report_presence(request):
     else:
         for combination in (combinations(tags, 2)):
             base_query = base_query | Q(Q(title__icontains=combination[0]) & Q(title__icontains=combination[1]))
-
-        domain = Domain.objects.filter(domain=request.get_host()).first()
+        domain_query = Domain.objects.filter(domain=request_domain)
+        if domain_query.exists():
+            domain = domain_query.first()
+        else:
+            domain = Domain.objects.all().first()
         matching_reports = Report.objects.filter(base_query)
 
         if not domain.is_root_domain:
@@ -434,7 +462,7 @@ def check_report_presence(request):
             # allow to assign to admins, moderators and community liaisons of this domain
             report_form.fields["assigned_to"].queryset = User.objects.filter(
                 role__in=[User.COMMUNITY_LIAISON, User.MODERATOR, User.ADMIN],
-                role_domains=Domain.objects.filter(domain=request.get_host()).first(),
+                role_domains=Domain.objects.filter(domain=request_domain).first(),
             )
             sighting_form = AddSightingForm()
         else:
@@ -462,9 +490,10 @@ def add_report(request):
         sighting_form = AddSightingForm()
     elif request.user.role == User.ADMIN or request.user.role == User.MODERATOR:
         report_form = AdminReportForm(initial={"title": title})
+        request_domain = get_current_site(request).domain
         report_form.fields["assigned_to"].queryset = User.objects.filter(
             role__in=[User.COMMUNITY_LIAISON, User.MODERATOR, User.ADMIN],
-            role_domains=Domain.objects.filter(domain=request.get_host()).first(),
+            role_domains=Domain.objects.filter(domain=request_domain).first(),
         )
         sighting_form = AddSightingForm()
 
@@ -475,6 +504,7 @@ def add_report(request):
         sighting_form = AddSightingForm()
     context = {"report_form": report_form, "sighting_form": sighting_form}
     return render(request, "report/add_report.html", context)
+
 
 
 @login_required
@@ -511,9 +541,13 @@ def create_report(request):
         else:
             report_form = CommunityLiaisonForm(request.POST)
             sighting_form = AddSightingForm(request.POST)
-        domain = Domain.objects.filter(domain=request.get_host()).first()
+        request_domain = get_current_site(request).domain
+        domain_query = Domain.objects.filter(domain=request_domain)
+        if domain_query.exists():
+            domain = domain_query.first()
+        else:
+            domain = Domain.objects.all().first()
         locator = Nominatim(user_agent="wikirumours")
-
         report_location_data = request.POST.get("report-location", None)
         sighting_location_data = request.POST.get("sighting-location", None)
         error_message = "Please make sure to select a location."
@@ -521,9 +555,8 @@ def create_report(request):
             report_form.add_error('location', error_message)
         if not sighting_location_data:
             sighting_form.add_error('location', error_message)
-
+        
         if report_form.is_valid() and sighting_form.is_valid():
-
             report_location = re.split(r"[()\s]", report_location_data)
             sighting_location = re.split(r"[()\s]", sighting_location_data)
             report_latlong = "{},{}".format(report_location[3], report_location[2])
@@ -561,15 +594,9 @@ def create_report(request):
                     sighting.reported_via = reported_via_internet
 
             sighting.save()
-
-            action.send(
-                sender=request.user,
-                verb='created',
-                target=report
-            )
-
             new_report_alert(report)
-
+            log_data = {'ip_address':get_client_ip(request),'user':request.user,'action':'Create Report','report':report,'sighting':sighting}
+            create_user_log(log_data)
             return redirect(reverse("index"))
         else:
             context = {"report_form": report_form, "sighting_form": sighting_form}
@@ -608,13 +635,8 @@ def create_sighting(request, report_public_id=None):
                     sighting.reported_via = reported_via_internet
 
             sighting.save()
-
-            action.send(
-                sender=request.user,
-                verb='added sighting',
-                action_object=sighting,
-                target=report
-            )
+            log_data = {'ip_address':get_client_ip(request),'user':request.user,'action':'Create Sighting','report':report,'sighting':sighting}
+            create_user_log(log_data)
             return redirect(reverse("index"))
         else:
             context = {
@@ -627,11 +649,17 @@ def create_sighting(request, report_public_id=None):
 
 def reports_and_sightings(request, report_public_id):
     user = request.user
-    domain = Domain.objects.filter(domain=request.get_host()).first()
-    if domain.is_root_domain:
-        report_to_view = Report.objects.filter(public_id=report_public_id).first()
+    request_domain = get_current_site(request).domain
+    domain_query = Domain.objects.filter(domain=request_domain)
+    if domain_query.exists():
+        domain = domain_query.first()
     else:
-        report_to_view = Report.objects.filter(public_id=report_public_id, domain=domain).first()
+        domain = Domain.objects.all().first()
+    report_query = Report.objects.filter(public_id=report_public_id)
+    if domain.is_root_domain:
+        report_to_view = report_query.first()
+    else:
+        report_to_view = report_query.first()
 
     if report_to_view is not None:
         first_sighting_report = Sighting.objects.filter(
@@ -651,6 +679,7 @@ def reports_and_sightings(request, report_public_id):
             comments = Comment.objects.filter(report=report_to_view, is_hidden=False)
 
         all_sightings = Sighting.objects.filter(report=report_to_view)
+
 
         if not request.user.is_anonymous:
             is_report_watchlisted = WatchlistedReport.objects.filter(user=request.user, report=report_to_view).exists()
@@ -691,14 +720,22 @@ def reports_and_sightings(request, report_public_id):
         return None
 
 
+
+
 def view_report(request, report_public_id):
     data = reports_and_sightings(request, report_public_id)
+    report_object = data.get('report')
     if data is not None:
-        context = {}
+        if request.user.is_authenticated:
+            edit_permission = request.user.can_edit_report(report_object)
+        else:
+            edit_permission = False
+        context = {'edit_permission':edit_permission}
         context.update(data)
         return render(request, "report/view_report.html", context)
     else:
         return redirect(reverse("login"))
+
 
 
 def sightings(request, report_public_id):
@@ -747,14 +784,8 @@ def flag_comment(request, report_public_id, comment_id):
             comment=comment,
             flagged_by=request.user
         )
-
-        action.send(
-            sender=request.user,
-            verb='flagged comment',
-            action_object=comment,
-            target=report
-        )
-
+        log_data = {'ip_address':get_client_ip(request),'user':request.user,'action':'Flag Comment','report':report,'comment':comment}
+        create_user_log(log_data)
         return redirect(reverse("comments", kwargs={"report_public_id": report_public_id}))
 
     except Report.DoesNotExist:
@@ -768,7 +799,8 @@ def hide_comment(request, comment_id):
     comment_to_hide = Comment.objects.filter(id=comment_id).first()
     comment_to_hide.is_hidden = True
     comment_to_hide.save()
-
+    log_data = {'ip_address':get_client_ip(request),'user':request.user,'action':'Hide Comment','report':comment_to_hide.report,'comment':comment_to_hide}
+    create_user_log(log_data)
     return redirect(
         reverse("comments", kwargs={"report_public_id": comment_to_hide.report.public_id})
     )
@@ -779,7 +811,8 @@ def show_comment(request, comment_id):
     comment_to_show = Comment.objects.filter(id=comment_id).first()
     comment_to_show.is_hidden = False
     comment_to_show.save()
-
+    log_data = {'ip_address':get_client_ip(request),'user':request.user,'action':'Show Comment','report':comment_to_show.report,'comment':comment_to_show}
+    create_user_log(log_data)
     return redirect(
         reverse("comments", kwargs={"report_public_id": comment_to_show.report.public_id})
     )
@@ -787,19 +820,20 @@ def show_comment(request, comment_id):
 
 @login_required
 def my_activity(request):
-    domain = Domain.objects.filter(domain=request.get_host()).first()
-
     reports = Report.objects.filter(reported_by=request.user)
     sightings = Sighting.objects.filter(
         user=request.user, is_first_sighting=False
     )
-
+    request_domain = get_current_site(request).domain
+    domain_query = Domain.objects.filter(domain=request_domain)
+    if domain_query.exists():
+        domain = domain_query.first()
+    else:
+        domain = Domain.objects.all().first()
     if not domain.is_root_domain:
         reports = reports.filter(domain=domain)
         sightings = sightings.filter(report__domain=domain)
-
-    watchlisted_reports = Report.objects.filter(watchlistedreport__user=request.user, domain=domain).order_by(
-        '-watchlistedreport__created_at')
+    watchlisted_reports = Report.objects.filter(watchlistedreport__user=request.user, domain=domain).order_by('-watchlistedreport__created_at')
     watchlisted_reports_paginator = Paginator(watchlisted_reports, 10)
     watchlisted_reports_page_number = request.GET.get("watchlisted_page")
     watchlisted_reports_page_obj = watchlisted_reports_paginator.get_page(watchlisted_reports_page_number)
@@ -840,16 +874,17 @@ def edit_report(request, report_public_id=None):
 
         report_form = AdminReportForm(instance=report)
         # if assigned to, show current user also even if it is not a valid choice to select.
+        request_domain = get_current_site(request).domain
         if report.assigned_to:
             report_form.fields["assigned_to"].queryset = User.objects.filter(
                 Q(role__in=[User.COMMUNITY_LIAISON, User.MODERATOR, User.ADMIN],
-                  role_domains=Domain.objects.filter(domain=request.get_host()).first()) |
+                  role_domains=Domain.objects.filter(domain=request_domain).first()) |
                 Q(id=report.assigned_to.id)
             )
         else:
             report_form.fields["assigned_to"].queryset = User.objects.filter(
                 role__in=[User.COMMUNITY_LIAISON, User.MODERATOR, User.ADMIN],
-                role_domains=Domain.objects.filter(domain=request.get_host()).first()
+                role_domains=Domain.objects.filter(domain=request_domain).first()
             )
 
         sighting_form = AddSightingForm(instance=sighting)
@@ -873,8 +908,6 @@ def update_report(request, report_public_id=None):
     sighting = Sighting.objects.filter(
         report__public_id=report_public_id, is_first_sighting=True
     ).first()
-    domain = Domain.objects.filter(domain=request.get_host()).first()
-
     if not request.user.can_edit_report(report):
         return HttpResponseForbidden()
 
@@ -901,35 +934,38 @@ def update_report(request, report_public_id=None):
     except Exception:
         report_address = report_latlong
         sighting_address = sighting_latlong
+    if request.method == 'POST':
+        # check if forms are valid or not
+        if report_form.is_valid() and sighting_form.is_valid():
+            report = report_form.save(commit=False)
 
-    # check if forms are valid or not
-    if report_form.is_valid() and sighting_form.is_valid():
-        report = report_form.save(commit=False)
+            if not valid_report_resolution(report):
+                report_form.add_error('resolution', "Resolution is required for the selected status")
+                context = {"report": report, "report_form": report_form, "sighting_form": sighting_form}
+                return render(request, "report/edit_report.html", context)
 
-        if not valid_report_resolution(report):
-            report_form.add_error('resolution', "Resolution is required for the selected status")
+            report.recently_edited_by = request.user
+            report.address = report_address
+            report.save()
+            report_form._save_m2m()
+            sighting = sighting_form.save(commit=False)
+            sighting.report = report
+            sighting.user = request.user
+            sighting.is_first_sighting = True
+            sighting.address = sighting_address
+            sighting.save()
+            log_data = {'ip_address':get_client_ip(request),'user':request.user,'action':'Update Report','report':report,'sighting':sighting}
+            create_user_log(log_data)
+            return redirect(reverse("view_report", kwargs={"report_public_id": report.public_id}))
+        else:
             context = {"report": report, "report_form": report_form, "sighting_form": sighting_form}
             return render(request, "report/edit_report.html", context)
-
-        report.recently_edited_by = request.user
-        report.address = report_address
-        report.save()
-        report_form._save_m2m()
-        sighting = sighting_form.save(commit=False)
-        sighting.report = report
-        sighting.user = request.user
-        sighting.is_first_sighting = True
-        sighting.address = sighting_address
-        sighting.save()
-        action.send(
-            sender=request.user,
-            verb='edited',
-            target=report
-        )
-        return redirect(reverse("view_report", kwargs={"report_public_id": report.public_id}))
     else:
         context = {"report": report, "report_form": report_form, "sighting_form": sighting_form}
+        context.update(csrf(request))
         return render(request, "report/edit_report.html", context)
+
+
 
 
 @login_required
@@ -960,6 +996,8 @@ def report_evidence(request, report_public_id=None):
                     file=uploaded_file
                 )
                 evidence_file.save()
+                log_data = {'ip_address':get_client_ip(request),'user':request.user,'action':'Report Evidence','report':report,'evidence':evidence_file}
+                create_user_log(log_data)
         return render(request, "report/report_evidence.html", context=context)
 
 
@@ -1009,14 +1047,8 @@ def update_sighting(request, sighting_id=None):
             sighting = sighting_form.save(commit=False)
             sighting.address = sighting_address
             sighting.save()
-
-            action.send(
-                sender=request.user,
-                verb='edited sighting',
-                action_object=sighting,
-                target=sighting.report
-            )
-
+            log_data = {'ip_address':get_client_ip(request),'user':request.user,'action':'Update Sighting','sighting':sighting,'report':sighting.report}
+            create_user_log(log_data)
             return redirect(reverse("index"))
         else:
             context = {
@@ -1028,8 +1060,12 @@ def update_sighting(request, sighting_id=None):
 
 @login_required
 def my_task(request):
-    domain = Domain.objects.filter(domain=request.get_host()).first()
-
+    request_domain = get_current_site(request).domain
+    domain_query = Domain.objects.filter(domain=request_domain)
+    if domain_query.exists():
+        domain = domain_query.first()
+    else:
+        domain = Domain.objects.all().first()
     if not domain.is_root_domain:
         reports = request.user.get_tasks(domain)
     else:
@@ -1048,14 +1084,8 @@ def add_comment(request):
     comment = request.POST["comment"]
     report = Report.objects.filter(public_id=report_public_id).first()
     comment = Comment.objects.create(comment=comment, user=request.user, report=report)
-
-    action.send(
-        sender=request.user,
-        verb='added comment',
-        action_object=comment,
-        target=report
-    )
-
+    log_data = {'ip_address':get_client_ip(request),'user':request.user,'action':'Add Comment','comment':comment,'report':report}
+    create_user_log(log_data)
     return redirect(reverse("comments", kwargs={"report_public_id": report_public_id}))
 
 
@@ -1068,12 +1098,8 @@ def delete_comment(request, comment_id=None):
         return redirect(reverse("login"))
 
     comment.delete()
-
-    action.send(
-        sender=request.user,
-        verb='deleted a comment',
-        target=report
-    )
+    log_data = {'ip_address':get_client_ip(request),'user':request.user,'action':'Remove Comment','report':report}
+    create_user_log(log_data)
     return redirect(reverse("comments", kwargs={"report_public_id": report.public_id}))
 
 
@@ -1087,7 +1113,12 @@ def statistics(request):
 
 @api_view(('GET',))
 def statistics_data(request):
-    domain = Domain.objects.filter(domain=request.get_host()).first()
+    request_domain = get_current_site(request).domain
+    domain_query = Domain.objects.filter(domain=request_domain)
+    if domain_query.exists():
+        domain = domain_query.first()
+    else:
+        domain = Domain.objects.all().first()
     start_date = request.GET.get("start_date", None)
     end_date = request.GET.get("end_date", None)
 
@@ -1317,6 +1348,8 @@ def statistics_data(request):
 def add_to_watchlist(request, report_public_id):
     report = Report.objects.filter(public_id=report_public_id).first()
     _ = WatchlistedReport.objects.get_or_create(user=request.user, report=report)
+    log_data = {'ip_address':get_client_ip(request),'user':request.user,'action':'Add To Watchlist','report':report}
+    create_user_log(log_data)
     return redirect(
         reverse("comments", kwargs={"report_public_id": report.public_id})
     )
@@ -1327,6 +1360,8 @@ def add_to_watchlist(request, report_public_id):
 def remove_from_watchlist(request, report_public_id):
     report = Report.objects.filter(public_id=report_public_id).first()
     WatchlistedReport.objects.filter(user=request.user, report=report).delete()
+    log_data = {'ip_address':get_client_ip(request),'user':request.user,'action':'Remove From Watchlist','report':report}
+    create_user_log(log_data)
     return redirect(
         reverse("comments", kwargs={"report_public_id": report.public_id})
     )

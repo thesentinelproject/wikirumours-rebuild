@@ -9,6 +9,7 @@ from taggit_selectize.managers import TaggableManager
 
 from countries.models import Country
 from django.contrib.gis.db import models as gis_models
+from django.core.exceptions import ValidationError
 
 
 #
@@ -180,7 +181,7 @@ class Report(models.Model):
         ),
     )
     title = models.TextField()
-    public_id = models.CharField(max_length=6, default=generate_public_key, unique=True)
+    public_id = models.CharField(max_length=6, default=generate_public_key, unique=True,db_index=True)
     assigned_to = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="%(class)s_assigned_to",
@@ -196,11 +197,10 @@ class Report(models.Model):
         blank=True,
     )
     priority = models.ForeignKey(
-        PriorityChoice, null=True, blank=True, on_delete=models.SET_NULL
+        PriorityChoice, null=True, blank=False, on_delete=models.SET_NULL
     )
-
     status = models.ForeignKey(
-        StatusChoice, null=True, blank=True, on_delete=models.SET_NULL
+        StatusChoice, null=True, blank=False, on_delete=models.SET_NULL
     )
     resolution = models.TextField(null=True, blank=True)
     country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)
@@ -221,6 +221,14 @@ class Report(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
+
+    def clean(self):
+        if not self.resolution and self.status:
+            if not (str(self.status) == self.UNDER_INVESTIGATION) and not (str(self.status) == self.UNINVESTIGATED):
+                raise ValidationError('Resolution is required for the selected status')
+
+
     @property
     def is_overdue(self):
         # if self.updated_at and self.priority and self.priority.number_of_days_before_alert:
@@ -234,6 +242,7 @@ class Report(models.Model):
     @property
     def sightings_count(self):
         return self.sighting_set.count()
+
 
     @property
     def absolute_url(self):
@@ -253,6 +262,13 @@ class Report(models.Model):
     @property
     def model_name(self):
         return 'report'
+
+    def save(self, *args, **kwargs):
+        if not self.priority and not self.status:
+            self.priority =  PriorityChoice.objects.filter(name='High').first()
+            self.status =  StatusChoice.objects.filter(name='New / uninvestigated').first()
+        super(Report, self).save()
+    
 
 
 
@@ -379,6 +395,7 @@ class EvidenceFile(models.Model):
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     file = models.FileField(upload_to=get_report_public_id, null=False, blank=False,max_length=500)
     is_public = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True,null=True)
 
     def __str__(self):
         return f'{self.file.name}'
@@ -390,3 +407,4 @@ class EvidenceFile(models.Model):
     class Meta:
         verbose_name = "Evidence File"
         verbose_name_plural = "Evidence Files"
+

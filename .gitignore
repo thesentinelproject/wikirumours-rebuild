@@ -13,6 +13,11 @@ media
 # Backup files #
 *.bak
 
+**/__pycache__
+**/__pycache__/*
+**/migrations
+**/migrations/*
+
 # If you are using PyCharm #
 .idea/**/workspace.xml
 .idea/**/tasks.xml

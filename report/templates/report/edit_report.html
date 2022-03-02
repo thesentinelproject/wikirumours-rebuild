@@ -21,19 +21,20 @@
                 Go to Evidence
             </a>
         </div>
+        
+        {% if user.role == 'Admin' %}
         <div class="blue-links text-right">
             <a target="_blank" href="{%url report|admin_urlname:'change' report.id %}">
                 Open in Admin
             </a>
         </div>
-        <form method="post" action="{% url 'update_report' report_public_id=report.public_id%}"
-              enctype="multipart/form-data"
-              id="EditReport">
+        {% endif %}
 
+        <form method="post" action="{% url 'update_report' report_public_id=report.public_id%}" enctype="multipart/form-data" id="EditReport">
+            {% csrf_token %}
             <div class="rounded px-8 md:px-12 py-8 md:py-12 mt-4 flex flex-col dark:bg-wr-grey-dark bg-white" id="edit_report">
 
-                {%csrf_token%}
-                {%for field in report_form %}
+                {% for field in report_form %}
                 {% if field.help_text %}
                 <div class="flex flex-row items-center ">
                     <div class="text-xs md:text-md text-wr-grey font-bold dark:text-white px-1">{{field.label}}</div>
@@ -46,10 +47,12 @@
                 {% endif %}
 
                 {{field}}
-                <div class="text-red-600 py-2 md:font-extrabold">{{field.errors}}</div>
+                <div class="text-red-600 py-2 md:font-extrabold">{{field.error}}</div>
                 {% endfor %}
 
-
+                {% if report_form.non_field_errors %}
+                    <div class="text-red-600 py-2 md:font-extrabold">{{ report_form.non_field_errors }}</div>
+                {% endif %}
             </div>
 
 
@@ -58,7 +61,13 @@
             <div class="text-md md:text-2xl text-center font-bold text-wr-blue mt-8">{% trans 'Add more information about report sighting' %}
             </div>
             <div class="rounded px-8 md:px-12 py-8 md:py-12 mt-4 flex flex-col dark:bg-wr-grey-dark bg-white">
-                {%for field in sighting_form %}
+
+                {% if sighting_form.non_field_errors %}
+                    <div class="text-red-600 py-2 md:font-extrabold">{{ sighting_form.non_field_errors }}</div>
+                {% endif %}
+
+
+                {% for field in sighting_form %}
                 {% if field.help_text %}
                 <div class="flex flex-row items-center ">
                     <div class="text-xs md:text-md text-wr-grey font-bold dark:text-white px-1">{{field.label}}</div>

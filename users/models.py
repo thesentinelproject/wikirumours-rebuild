@@ -1,5 +1,6 @@
 import datetime
 from datetime import timedelta
+from statistics import mode
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
@@ -15,6 +16,7 @@ from django.utils.translation import gettext_lazy as _
 
 def generate_password_reset_token():
     return get_random_string(16)
+
 
 
 class User(AbstractUser):
@@ -62,7 +64,7 @@ class User(AbstractUser):
         Country, on_delete=models.CASCADE, null=True, blank=True
     )
     location = models.CharField(max_length=20, null=True, blank=True)
-    role = models.CharField(max_length=200, choices=ROLES_CHOICES, default=END_USER)
+    role = models.CharField(max_length=200, choices=ROLES_CHOICES)
     role_domains = models.ManyToManyField(Domain, blank=True)
 
     enable_email_reminders = models.BooleanField(default=False,
@@ -147,6 +149,12 @@ class User(AbstractUser):
     @property
     def get_full_name(self):
         return self.first_name + " " + self.last_name
+    
+    def save(self, *args, **kwargs):
+        if not self.role:
+            self.role = 'End User'
+        super(User, self).save()
+
 
 
 class AccountActivationToken(models.Model):
@@ -160,7 +168,9 @@ class AccountActivationToken(models.Model):
 
 
 class BlacklistedIP(models.Model):
-    ip_address = models.GenericIPAddressField()
+    ip_address = models.GenericIPAddressField(db_index=True)
+    is_whitelisted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True,null=True)
 
     def __str__(self):
         return self.ip_address
