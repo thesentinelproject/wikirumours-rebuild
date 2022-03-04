@@ -1,5 +1,4 @@
-from datetime import datetime
-
+import datetime
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -15,7 +14,7 @@ User = get_user_model()
 
 @login_required()
 def chat(request, username=None):
-    request.user.chat_messages_viewed_at = datetime.now()
+    request.user.chat_messages_viewed_at = datetime.datetime.now()
     request.user.save()
     selected_user = None
 

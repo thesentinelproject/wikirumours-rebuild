@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
-
+from datetime import timedelta 
+import datetime
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -123,7 +123,7 @@ def email_sent(request):
 
 def account_verification(request, token=None):
     account = AccountActivationToken.objects.filter(
-        token=token, created_at__gte=datetime.now() - timedelta(hours=24)
+        token=token, created_at__gte=datetime.datetime.now() - timedelta(hours=24)
     ).first()
     if account:
         user = User.objects.filter(email=account.email).first()
@@ -163,7 +163,7 @@ def forgot_password(request):
 
 def reset_password(request, token=None):
     account = AccountActivationToken.objects.filter(
-        token=token, created_at__gte=datetime.now() - timedelta(hours=24)
+        token=token, created_at__gte=datetime.datetime.now() - timedelta(hours=24)
     ).first()
     if account:
 
@@ -178,7 +178,7 @@ def reset_password(request, token=None):
 def reset_password_post(request):
     token = request.POST.get("token")
     account_token = AccountActivationToken.objects.filter(
-        token=token, created_at__gte=datetime.now() - timedelta(hours=24)
+        token=token, created_at__gte=datetime.datetime.now() - timedelta(hours=24)
     ).first()
     if not account_token:
         messages.warning(
