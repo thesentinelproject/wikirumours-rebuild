@@ -191,7 +191,7 @@ MAP_WIDGETS = {
 TAGGIT_TAGS_FROM_STRING = "taggit_selectize.utils.parse_tags"
 TAGGIT_STRING_FROM_TAGS = "taggit_selectize.utils.join_tags"
 
-EMAIL_HOST = os.environ.get("DATABASE_NAME", "")
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
 EMAIL_PORT = os.environ.get("EMAIL_PORT", "")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
