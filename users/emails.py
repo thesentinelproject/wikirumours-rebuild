@@ -72,7 +72,9 @@ def new_report_alert(report):
     from users.models import User
 
     recipients = User.objects.filter(role__in=[User.ADMIN, User.MODERATOR], role_domains=report.domain, enable_email_notifications=True)
-
+    
+    domain_name = str(report.domain)
+    
     context = {
         'report': report,
     }
@@ -80,7 +82,7 @@ def new_report_alert(report):
     text_content = render_to_string("emails/new_report_alert.txt", context=context)
     html_content = render_to_string("emails/new_report_alert.html", context=context)
     send_mail(
-        f'Wikirumours - New report submitted',
+        f'{domain_name.capitalize()} - New report submitted',
         text_content,
         'support@wikirumours.org',
         [recipient.email for recipient in recipients],
