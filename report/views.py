@@ -764,8 +764,13 @@ def comments(request, report_public_id):
             flagged_comments = [fc.comment for fc in FlaggedComment.objects.filter(flagged_by=request.user)]
         else:
             flagged_comments = []
+        if request.user.is_authenticated:
+            report = Report.objects.get(public_id=report_public_id)
+            edit_permission = request.user.can_edit_report(report)
+        else:
+            edit_permission = False
         context = {
-            "flagged_comments": flagged_comments,
+            "flagged_comments": flagged_comments,'edit_permission':edit_permission
         }
         context.update(data)
         return render(request, "report/comments.html", context)
@@ -969,21 +974,17 @@ def update_report(request, report_public_id=None):
 
 
 @login_required
-def report_evidence(request, report_public_id=None):
-    report = Report.objects.filter(public_id=report_public_id).first()
-
+def report_evidence(request, report_public_id):
+    report = Report.objects.get(public_id=report_public_id)
     if not request.user.can_edit_report(report):
         return HttpResponseForbidden()
-
     if request.method == 'GET':
         context = {"report": report}
         return render(request, "report/report_evidence.html", context=context)
     else:
         context = {"report": report}
-
         for uploaded_file in request.FILES.getlist('evidence_files'):
-
-            # cehck if each file is valid. if valid save else add error message
+            # check if each file is valid. if valid save else add error message
             mimetype = magic.from_buffer(uploaded_file.read(), mime=True)
             if not ("image" in mimetype) and not "pdf" in mimetype:
                 messages.add_message(request, messages.ERROR,
