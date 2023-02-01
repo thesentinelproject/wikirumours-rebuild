@@ -14,8 +14,8 @@ ALLOWED_HOSTS = [
     "runtuwaanabad.org",
 ]
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = "/home/wikirumours/wikirumours.org/media"
+# MEDIA_URL = "/media/"
+# MEDIA_ROOT = "/home/wikirumours/wikirumours.org/media"
 
 #GEOS_LIBRARY_PATH = '/home/wikirumours/libraries/geos-3.5.2/capi/.libs/libgeos_c.so'
 #GDAL_LIBRARY_PATH = '/home/wikirumours/libraries/gdal-2.4.4/.libs/libgdal.so'
