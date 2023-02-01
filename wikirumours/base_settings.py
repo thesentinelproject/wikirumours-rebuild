@@ -125,7 +125,7 @@ DATABASES = {
         "USER": os.environ["DATABASE_USER"],
         "PASSWORD": os.environ["DATABASE_PASSWORD"],
         "HOST": os.environ["DATABASE_HOST"],
-        "PORT": "",
+        "PORT": os.environ["DATABASE_PORT"],
     }
 }
 
@@ -169,7 +169,7 @@ REST_FRAMEWORK = {
 }
 
 FCM_DJANGO_SETTINGS = {
-        "FCM_SERVER_KEY": "AAAAw_uvcuQ:APA91bGS2_Au97iJCB4hKFC1klS1HA_AUNp7ejB4GISKrsYqx8m3BifwgJmSOJlrlaLiQbtFk30gB3E2Nkf-1GMyVaXJ11FGlgtmOjnPI28_pBMt1vJL0e1skhJyUbZymsqT-himgOqC",
+        "FCM_SERVER_KEY": os.environ["FCM_SERVER_KEY"],
         "DELETE_INACTIVE_DEVICES": False,
 }
 
