@@ -31,5 +31,7 @@ urlpatterns = [
     path("view_report/<report_public_id>/sightings/", views.sightings, name="sightings"),
     path("statistics/data", views.statistics_data, name="statistics_data"),
     path("statistics/", views.statistics, name="statistics"),
+    path("statistics2/<int:id>/data", views.statistics_data2, name="statistics_data2"),
+    path("statistics2/<int:id>/", views.statistics2, name="statistics2"),
 
 ]

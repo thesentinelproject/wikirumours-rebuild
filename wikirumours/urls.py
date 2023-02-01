@@ -29,6 +29,11 @@ from django.conf.urls.i18n import i18n_patterns
 from report.views import content_page
 from users.views import logout_user
 from users.views import handler404,handler500
+from rest_framework.routers import DefaultRouter
+from fcm_django.api.rest_framework import FCMDeviceAuthorizedViewSet
+
+router = DefaultRouter()
+router.register(r'devices', FCMDeviceAuthorizedViewSet)
 
 
 handler404 = handler404
@@ -67,17 +72,21 @@ urlpatterns = i18n_patterns(
     url(
         r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
     ),
+    # path('api/',include('api.urls')),
+    # path('', include(router.urls)),
     path("", lambda r: HttpResponseRedirect("/home")),
     path("admin/", admin.site.urls),
     url(r"^reports/", include("report.urls")),
     url(r"^chat/", include("chat.urls")),
     url(r"^articles/", include("articles.urls")),
     url(r"^api/", include("report.api_urls")),
+    url(r"^newapi/", include("newapi.urls")),
     url("", include("users.urls")),
     url(r"^i18n/", include("django.conf.urls.i18n")),
     path("content/<content_slug>", content_page, name="content_page"),
 
     url(r"^taggit/", include("taggit_selectize.urls")),
+    path('', include(router.urls)),
     # path('api/', include('rest_framework.urls')),
 )
 

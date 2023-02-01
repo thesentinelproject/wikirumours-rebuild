@@ -3,7 +3,7 @@ from django.contrib import admin
 from mapwidgets import GooglePointFieldWidget
 from django.contrib.gis.db import models
 from .models import Domain, Report, Sighting, Comment, PriorityChoice, SourceChoice, StatusChoice, ReportedViaChoice, \
-    WatchlistedReport, CMSPage, BlogPage, EvidenceFile
+    WatchlistedReport, CMSPage, BlogPage, EvidenceFile, NotificationHistoryData
 from admin_auto_filters.filters import AutocompleteFilter
 from django.utils.text import Truncator
 
@@ -109,6 +109,12 @@ class BlogPageAdmin(admin.ModelAdmin):
     model = BlogPage 
 
 
+class NotificationAdmin(admin.ModelAdmin):
+    list_per_page = 7
+    search_fields = ('user','text','title','time')
+    list_display = ('user','text','title','time')
+
+
 admin.site.register(Domain, DomainAdmin)
 admin.site.register(Report, ReportAdmin)
 admin.site.register(Sighting, SightingAdmin)
@@ -121,6 +127,7 @@ admin.site.register(ReportedViaChoice,ReportedViaChoiceAdmin)
 admin.site.register(WatchlistedReport,WatchlistedReportAdmin)
 admin.site.register(CMSPage,CMSPageAdmin)
 admin.site.register(BlogPage,BlogPageAdmin)
+admin.site.register(NotificationHistoryData,NotificationAdmin)
 
 
 

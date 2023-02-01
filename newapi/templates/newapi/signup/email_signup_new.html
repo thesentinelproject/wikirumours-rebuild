@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wikirumours account activation</title>
+</head>
+<body>
+    <h3>Welcome to Wikirumours</h3>
+    <p>Here is a link to verify your account:</p>
+
+    <a target="_blank" href="http://{{ domain }}{% url 'wikirumours_newapi:verify_confirmation' uidb64=uid token=token %}"><button type="button">Activate Now</button></a>
+</body>
+</html>

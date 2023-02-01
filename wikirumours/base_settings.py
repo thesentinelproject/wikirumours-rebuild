@@ -31,6 +31,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+
 ALLOWED_HOSTS = [
     "localhost",
     "*",
@@ -40,6 +41,7 @@ ALLOWED_HOSTS = [
 
 # Application definition
 INSTALLED_APPS = [
+    # "api.apps.ApiConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -52,7 +54,10 @@ INSTALLED_APPS = [
     "theme",
     "report",
     "chat",
+    "newapi",
     "rest_framework",
+    "django_rest_passwordreset",
+    "django_filters",
     "users",
     "location_field.apps.DefaultConfig",
     "countries",
@@ -65,8 +70,16 @@ INSTALLED_APPS = [
     "colorfield",
     "loginas",
     'dbbackup',
-    'logs'
+    'logs',
+    'fcm_django',
+    'django_crontab',
 ]
+
+CRONJOBS = [
+    ('0 0 * * 0', 'report.cron.InactiveAlert', '>> /home/mavericklabs/wikirumours.org/wikirumours/file.log')
+]
+
+CRONTAB_COMMAND_SUFFIX = '2>&1'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -134,8 +147,31 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# REST_FRAMEWORK = {
+#     'DEFAULT_RENDERER_CLASSES': (
+#         'rest_framework.renderers.JSONRenderer',
+#     ),
+#     # 'DEFAULT_PERMISSION_CLASSES': (
+#     #     'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+#     # ),
+#     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+#     'PAGE_SIZE': 1,
+# }
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS':(
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+}
+
+FCM_DJANGO_SETTINGS = {
+        "FCM_SERVER_KEY": "AAAAw_uvcuQ:APA91bGS2_Au97iJCB4hKFC1klS1HA_AUNp7ejB4GISKrsYqx8m3BifwgJmSOJlrlaLiQbtFk30gB3E2Nkf-1GMyVaXJ11FGlgtmOjnPI28_pBMt1vJL0e1skhJyUbZymsqT-himgOqC",
+        "DELETE_INACTIVE_DEVICES": False,
+}
 
 LANGUAGE_CODE = "en"
 

@@ -220,7 +220,7 @@ class Report(models.Model):
     occurred_on = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    emergency_alert = models.BooleanField(default=False)
 
 
     def clean(self):
@@ -407,4 +407,23 @@ class EvidenceFile(models.Model):
     class Meta:
         verbose_name = "Evidence File"
         verbose_name_plural = "Evidence Files"
+
+
+class NotificationHistoryData(models.Model):
+    email = models.EmailField(blank=True,null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='notification_user')
+    notification_from = models.ForeignKey(settings.AUTH_USER_MODEL,related_name='notification_from',on_delete=models.CASCADE,null=True,blank=True)
+    notification_type = models.CharField(max_length=100)
+    text = models.CharField(max_length=255)
+    title = models.CharField(max_length=100,blank=True)
+    mobile_token = models.CharField(max_length=255,blank=True)
+    user_read_status = models.BooleanField(default=False)
+    post = models.ForeignKey(Report,null=True,blank=True,on_delete=models.CASCADE)
+    # image = models.ImageField(upload_to='notification_image',null = True,unique=False,blank = True)
+    time = models.DateTimeField(auto_now_add=True, blank=True,null=True)
+
+    class Meta:
+        verbose_name = 'Notification'
+        verbose_name_plural = 'Notifications'
+        ordering = ('-time',)
 

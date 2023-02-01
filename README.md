@@ -19,10 +19,10 @@ We recommend creating a virtual env for all the python dependencies.
 	pip install -r requirements.txt
 
 # Run the database migrations 
-	python3 manage.py migrate
+	python manage.py migrate
 
 # Create the cachetable for regulating ip addresses
-	python3 manage.py createcachetable
+	python manage.py createcachetable
 
 # To set up Celery for running automatic backups
 To configure and celery you need first install and configure redis server
@@ -36,50 +36,37 @@ And on another terminal run the celery beat
 
 	celery -A wikirumours beat -l info
 
-*** Although not recommended for multiple horizontal instances, to run celery worker and beat in one command: ***
-	celery -A wikirumours worker --concurrency=3 beat -l info
-
-*** Where 3 is the number of workers determined by the cpu cores available in the server using the formula: ***
-	workers = (2 * cores) + 1
-
 
 Backups will be stored inside the server in a backups folder just outside the project root
 To run manual backups use the command
 
-	python3 manage.py dbbackup
+	python manage.py dbbackup
 
 
 To manually restore a backup
 
-	python3 manage.py dbrestore
+	python manage.py dbrestore
 
 The latest backup should be restored to the database
 
 
 # To start the server
-	python3 manage.py runserver
+	python manage.py runserver 0.0.0.0:8000
 
 # To create superuser
-	python3 manage.py createsuperuser
+	python manage.py createsuperuser
 
 # .env file
-Create a .env file in the root folder of the project with the following keys along with their appropriate values
-
-	GOOGLE_MAP_API_KEY =
-	MAPBOX_API_KEY = 
-	DATABASE_NAME = 
-	DATABASE_USER = 
-	DATABASE_PASSWORD = 
-	DATABASE_HOST = 
+Create a .env file in the root folder with the following keys along with their appropriate values
 
 	REDIS_IP = 
-	SECRET_KEY = 
-	
-	EMAIL_HOST = 
-	EMAIL = 
-	EMAIL_HOST_USER =
-	EMAIL_HOST_PASSWORD = 
-	EMAIL_PORT = 
+	GOOGLE_MAP_API_KEY=
+	MAPBOX_API_KEY=
+	DATABASE_NAME=
+	DATABASE_USER=
+	DATABASE_PASSWORD=
+	DATABASE_HOST=
+
 
 
 # (Optional) Import data script
@@ -91,6 +78,6 @@ Copy the files into "wikirumours/users/management/data" folder
 
 Run
 
-	 `python3 manage.py import_all_csvs`
+	 `python manage.py import_all_csvs`
 	
 

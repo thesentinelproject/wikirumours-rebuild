@@ -11,7 +11,7 @@
 <script src="https://momentjs.com/downloads/moment.min.js"></script>
 <script>
     var mapsApiKey = '{{GOOGLE_MAPS_KEY}}';
-    var location_data = {{ location_array|safe}};
+    var location_data = '{{ location_array|safe}}';
     sliderStartDate = moment("{{slider_start_date}}", "YYYY-MM-DD");
     sliderEndDate = moment("{{slider_end_date}}", "YYYY-MM-DD");
 

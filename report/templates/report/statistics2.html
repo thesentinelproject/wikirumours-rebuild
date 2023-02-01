@@ -1,0 +1,171 @@
+{% extends 'base2.html' %}
+{% block remove_header %}
+{% endblock %}
+{% block remove_sidebar %}
+{% endblock %}
+{% block remove_footer %}
+{% endblock %}
+{% load i18n %}
+{% load static %}
+{% block extra_header%}
+<script type="text/javascript" src="{% static 'jquery-ui/jquery-ui.js'  %}"></script>
+<script type="text/javascript" src="{% static 'jQAllRangeSliders-min.js'  %}"></script>
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.0/chart.js'></script>
+<link type="text/css" rel="stylesheet" href="{% static 'classic-min.css'  %}"/>
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css' rel='stylesheet'/>
+<!-- D3.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+<script src="https://momentjs.com/downloads/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
+{% endblock %}
+
+{% block main_project %}
+<div class="text-2xl md:text-4xl mt-4 text-center font-bold text-wr-blue" style="text-align: left; margin-left: 15px;"> {% trans 'Statistics' %}</div>
+
+<form id="filter-form" action="{% url 'index'%}" method="get">
+    <div class="md:flex md:justify-between md:space-x-4 md:flex-basis-0" style="margin-left: 15px; margin-right: 15px;">
+        {% for field in form %}
+        <div class="rounded px-2 py-2 mt-4 bg-wr-shadow dark:bg-wr-grey-dark flex-grow">
+            <div class="text-xs md:text-md text-wr-grey dark:text-white font-bold px-1">{{field.label}}</div>
+            {{field}}
+        </div>
+        {% endfor %}
+    </div>
+
+</form>
+
+<div class="mt-16 md:flex md:flex-row w-full dark:text-white">
+    <div class="md:flex md:flex-col w-full md:w-1/2 justify-between">
+        <div class="md:flex md:flex-row w-full">
+            <div class="wr-statistic-half-width-chunk">
+                <div class="wr-statistic-chunk-header">
+                    <div class="px-8 py-1">Date Selection</div>
+                </div>
+                <div class="md:flex md:w-full my-16">
+                    <div class="md:w-full md:mx-20 mx-16" id="date-range-slider">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="md:flex md:flex-row w-full">
+            <div class="wr-statistic-chunk">
+                <div class="wr-statistic-chunk-header">
+                    <div class="px-8 py-1">Reports</div>
+                </div>
+                <div class="md:flex w-full border-t md:flex-row justify-start ">
+                    <div id="reports_count" class="px-8 py-1">--</div>
+                </div>
+            </div>
+            <div class="wr-statistic-chunk">
+                <div class="wr-statistic-chunk-header">
+                    <div class="px-8 py-1">Sightings</div>
+                </div>
+                <div class="md:flex w-full border-t md:flex-row justify-start ">
+                    <div id="sightings_count" class="px-8 py-1">--</div>
+                </div>
+            </div>
+        </div>
+        <div class="md:flex md:flex-row w-full mb-8 md:mb-0">
+            <div class="wr-statistic-half-width-chunk">
+                <div class="wr-statistic-chunk-header">
+                    <div class="px-8 py-1">Heatmap</div>
+                </div>
+                <div class="md:flex w-full rounded">
+                    <div id="map" class="w-full h-144">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="md:flex md:flex-row w-full mb-8 md:mb-0">
+            <div class="wr-statistic-half-width-chunk">
+                <div class="wr-statistic-chunk-header">
+                    <div class="px-8 py-1">Line Chart</div>
+                </div>
+                <div class="md:flex md:w-full">
+                    <canvas id="line-chart">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="md:flex md:flex-col w-full md:w-1/2 justify-between">
+
+        <div class="md:flex md:flex-row w-full">
+            <div class="wr-statistic-chunk">
+                <div class="wr-statistic-chunk-header">
+                    <div class="px-8 py-1">Statuses</div>
+                </div>
+                <div class="md:flex w-full max-w-lg justify-center mx-auto p-4 md:p-8">
+                    <canvas class="w-full" id="statuses_pie"></canvas>
+                </div>
+            </div>
+            <div class="wr-statistic-chunk">
+                <div class="wr-statistic-chunk-header">
+                    <div class="px-8 py-1">Priorities</div>
+                </div>
+                <div class="md:flex w-full max-w-lg justify-center mx-auto p-4 md:p-8">
+                    <canvas class="w-full" id="priorities_pie"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="hidden md:flex md:flex-row w-full mb-8 md:mb-0">
+            <div class="wr-statistic-half-width-chunk">
+                <div class="wr-statistic-chunk-header">
+                    <div class="px-8 py-1">Top Tags</div>
+                </div>
+                <div class="md:flex w-full text-center dark:bg-gray-200 mx-auto ">
+                    <div class="md:p-16">
+                        <div id="chord-diagram">
+                        </div>
+                        <div id="tooltip">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="md:hidden mb-8 md:mb-0">
+            <div class="wr-statistic-half-width-chunk">
+                <div class="wr-statistic-chunk-header">
+                    <div class="px-8 py-1">Top Tags</div>
+                </div>
+                <div class="md:flex w-full text-center dark:bg-gray-200 mx-auto ">
+                    <div class="md:p-16">
+                        <div id="chord-diagram-mobile">
+                        </div>
+                        <div id="tooltip-mobile">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="{% if not request.domain.is_root_domain %} hidden {% endif %}">
+    <div class="md:flex md:flex-row my-8 justify-center ">
+        <div class="w-full md:w-1/2 self-center">
+            <div class="wr-statistic-half-width-chunk">
+                <div class="wr-statistic-chunk-header">
+                    <div class="px-8 py-1">Domains</div>
+                </div>
+                <div class="md:flex w-full justify-center p-2 md:p-8">
+                    <canvas id="domains_bar"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="my-24"></div>
+
+<script>
+    var mapboxApiKey = '{{MAPBOX_API_KEY}}';
+    
+</script>
+<script type="text/javascript" src="{% static 'js/statistics.js' %}">
+
+</script>
+
+{% endblock %}
