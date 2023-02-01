@@ -6,12 +6,17 @@ ALLOWED_HOSTS = [
     "wikirumours.org",
     "www.wikirumours.org",
     "peacefultruth.org",
+    "www.peacefultruth.org",
     "www.test.peacefultruth.org",
     "unahakika.org",
+    "www.unahakika.org",
     "lka.wikirumours.org",
     "kijijichaamani.org",
+    "www.kijijichaamani.org",
     "hagigawahid.org",
+    "www.hagigawahid.org",
     "runtuwaanabad.org",
+    "www.runtuwaanabad.org",
     "137.184.164.69",
 ]
 
