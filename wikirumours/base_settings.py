@@ -113,7 +113,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "wikirumours.wsgi.application"
-STATIC_ROOT = "static"
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -185,8 +184,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
+# STATIC_ROOT = "static"
+# STATIC_URL = "/static/"
+REPOSITORY_ROOT = os.path.dirname(BASE_DIR)
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(REPOSITORY_ROOT, 'static/')
 
-STATIC_URL = "/static/"
+
 TAILWIND_APP_NAME = "theme"
 
 AUTH_USER_MODEL = "users.User"
