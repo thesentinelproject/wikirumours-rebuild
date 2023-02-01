@@ -12,6 +12,7 @@ ALLOWED_HOSTS = [
     "kijijichaamani.org",
     "hagigawahid.org",
     "runtuwaanabad.org",
+    "137.184.164.69",
 ]
 
 # MEDIA_URL = "/media/"
