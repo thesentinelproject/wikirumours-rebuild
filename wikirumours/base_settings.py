@@ -195,8 +195,8 @@ TAILWIND_APP_NAME = "theme"
 
 AUTH_USER_MODEL = "users.User"
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(os.path.dirname(__file__), "", "media")
+MEDIA_URL = ""
+MEDIA_ROOT = os.path.join(REPOSITORY_ROOT, "media/")
 
 LANGUAGES = [
     ("hi", "Hindi"),
