@@ -381,13 +381,14 @@ def sighting_save_handler(sender, instance, created, **kwargs):
     if created:
         mailing_list = []
         report = instance.report
-        email = report.assigned_to.email
-        mailing_list.append(email)
-        watchlist_emails = WatchlistedReport.objects.filter(report=report).values_list('user__email', flat=True)
-        mailing_list.extend(watchlist_emails)
-        email_text = f"A new sighting was recently added to the report {report.title}"
-        subject = 'New Sighting Alert'
-        report_trigger_alert(report, mailing_list, subject, email_text)
+        if report.assigned_to:
+            email = report.assigned_to.email
+            mailing_list.append(email)
+            watchlist_emails = WatchlistedReport.objects.filter(report=report).values_list('user__email', flat=True)
+            mailing_list.extend(watchlist_emails)
+            email_text = f"A new sighting was recently added to the report {report.title}"
+            subject = 'New Sighting Alert'
+            report_trigger_alert(report, mailing_list, subject, email_text)
 
 
 
