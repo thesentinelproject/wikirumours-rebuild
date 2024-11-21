@@ -1,15 +1,15 @@
 import datetime
-
 from colorfield.fields import ColorField
 from django.db import models
 from django.conf import settings
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.crypto import get_random_string
 from taggit_selectize.managers import TaggableManager
-
 from countries.models import Country
 from django.contrib.gis.db import models as gis_models
 from django.core.exceptions import ValidationError
+from users.emails import new_comment_alert, report_trigger_alert
 
 
 #
@@ -270,6 +270,33 @@ class Report(models.Model):
         super(Report, self).save()
     
 
+@receiver(models.signals.pre_save, sender=Report)
+def report_save_handler(sender, instance, **kwargs):
+    if instance.pk:
+        old_instance = sender.objects.get(pk=instance.pk)
+        mailing_list = []
+        if old_instance.assigned_to != instance.assigned_to and instance.assigned_to != None:
+            email = instance.assigned_to.email
+            email_text = f"A new report was assigned to you on {instance.domain.domain}."
+            mailing_list.append(email)
+            subject = 'Report Assignment Change Alert'
+        if old_instance.status != instance.status and instance.status != None:
+            email = instance.assigned_to.email
+            mailing_list.append(email)
+            watchlist_emails = WatchlistedReport.objects.filter(report=instance).values_list('user__email', flat=True)
+            mailing_list.extend(watchlist_emails)
+            email_text = f"The following report was recently changed it's status to '{instance.status}'."
+            subject = 'Report Status Change Alert'
+        if old_instance.resolution != instance.resolution and instance.resolution != None:
+            email = instance.assigned_to.email
+            mailing_list.append(email)
+            watchlist_emails = WatchlistedReport.objects.filter(report=instance).values_list('user__email', flat=True)
+            mailing_list.extend(watchlist_emails)
+            email_text = f"The following report was recently changed it's resolution to '{instance.resolution}'"
+            subject = 'Report Resolution Change Alert'
+        report_trigger_alert(instance, mailing_list, subject, email_text)
+        
+           
 
 
 class Sighting(models.Model):
@@ -348,6 +375,22 @@ class Sighting(models.Model):
         return 'sighting'
 
 
+
+@receiver(models.signals.post_save, sender=Sighting)
+def sighting_save_handler(sender, instance, created, **kwargs):
+    if created:
+        mailing_list = []
+        report = instance.report
+        email = report.assigned_to.email
+        mailing_list.append(email)
+        watchlist_emails = WatchlistedReport.objects.filter(report=report).values_list('user__email', flat=True)
+        mailing_list.extend(watchlist_emails)
+        email_text = f"A new sighting was recently added to the report {report.title}"
+        subject = 'New Sighting Alert'
+        report_trigger_alert(report, mailing_list, subject, email_text)
+
+
+
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
@@ -358,6 +401,18 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.comment
+    
+
+@receiver(models.signals.post_save, sender=Comment)
+def comment_save_handler(sender, instance, created, **kwargs):
+    if created:
+        mailing_list = []
+        assigned_to = instance.report.assigned_to
+        if assigned_to and assigned_to.email:
+            mailing_list.append(assigned_to.email)
+        watchlist_emails = WatchlistedReport.objects.filter(report=instance.report).values_list('user__email', flat=True)
+        mailing_list.extend(watchlist_emails)
+        new_comment_alert(instance, mailing_list)
 
 
 class FlaggedComment(models.Model):

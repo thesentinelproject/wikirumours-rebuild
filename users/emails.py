@@ -5,6 +5,7 @@ from django.contrib.sites.shortcuts import get_current_site
 
 
 
+
 def account_verification_email(request, token, email):
     to = email
     link = (
@@ -94,12 +95,12 @@ def new_report_alert(report):
 
 def emergency_report_alert(report):
     # admins and moderators for the report's domain
-    from users.models import User
-
-    recipients = User.objects.filter(role__in=[User.ADMIN, User.MODERATOR], role_domains=report.domain, enable_email_notifications=True)
-
+    from report.models import WatchlistedReport
+    mailing_list = []
+    mailing_list.append(report.assigned_to.email)
+    watchlist_emails = WatchlistedReport.objects.filter(report=report).values_list('user__email', flat=True)
+    mailing_list.extend(watchlist_emails)
     domain_name = str(report.domain)
-
     context = {
         'report': report,
     }
@@ -110,7 +111,7 @@ def emergency_report_alert(report):
         f'{domain_name.capitalize()} - Emergency report created',
         text_content,
         'support@wikirumours.org',
-        [recipient.email for recipient in recipients],
+        mailing_list,
         fail_silently=True,
         html_message=html_content
     )
@@ -128,6 +129,47 @@ def api__key_email(request, email):
         'support@wikirumours.org',
         [to],
         fail_silently=False,
+        html_message=html_content
+    )
+    return None
+
+
+
+
+def report_trigger_alert(report, mailing_list, subject, email_text):
+    text_content = ''
+    domain_name = str(report.domain)
+    context = {
+        'report': report,
+        'email_text': email_text
+    }
+    html_content = render_to_string("emails/changes_report_alert.html", context=context)
+    send_mail(
+        f'{domain_name.capitalize()} - {subject}',
+        text_content,
+        'support@wikirumours.org',
+        [mailing_list],
+        fail_silently=True,
+        html_message=html_content
+    )
+    return None
+
+
+
+def new_comment_alert(comment_obj, email_list):
+    text_content = ''
+    report = comment_obj.report
+    domain_name = str(report.domain)
+    context = {
+        'report': report,
+    }
+    html_content = render_to_string("emails/new_comment_alert.html", context=context)
+    send_mail(
+        f'{domain_name.capitalize()} - New Comment Alert',
+        text_content,
+        'support@wikirumours.org',
+        [email_list],
+        fail_silently=True,
         html_message=html_content
     )
     return None

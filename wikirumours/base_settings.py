@@ -260,12 +260,15 @@ DBBACKUP_STORAGE_OPTIONS = {'location': os.path.join(BASE_DIR, '../backups')}
 
 from celery.schedules import crontab
 CELERY_BEAT_SCHEDULE = {
-    'regular-database-backup': {
-        'task': 'users.tasks.regular_database_backup',
-        'schedule': crontab(minute=55, hour=23),
+    'send-overdue-alerts': {
+        'task': 'report.tasks.send_overdue_email_alerts', 
+        'schedule': crontab(minute=00, hour=7),
+        'options': {'queue': 'io_bound'}
     },
 }
-
+CELERY_TASK_ROUTES = {
+    'report.tasks.send_overdue_email_alerts': {'queue': 'io_bound'},
+}
 AdminSite.enable_nav_sidebar = True
 
 
