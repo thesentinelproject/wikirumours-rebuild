@@ -25,6 +25,7 @@ cryptography==2.8
 distlib==0.3.0
 distro==1.4.0
 Django==3.1.4
+django-recaptcha==3.0.0
 django-admin-autocomplete-filter==0.6.1
 django-colorfield==0.4.1
 django-crontab==0.7.1
@@ -110,6 +111,7 @@ python-dateutil==2.7.3
 python-dotenv==0.15.0
 pytz==2022.7.1
 PyYAML==5.3.1
+redis==5.0.7
 requests==2.22.0
 requests-unixsocket==0.2.0
 roman==2.0.0
