@@ -275,26 +275,26 @@ def report_save_handler(sender, instance, **kwargs):
     if instance.pk:
         old_instance = sender.objects.get(pk=instance.pk)
         mailing_list = []
-        if instance.assigned_to:
-            if old_instance.assigned_to != instance.assigned_to:
-                email = instance.assigned_to.email
-                email_text = f"A new report was assigned to you on {instance.domain.domain}."
-                mailing_list.append(email)
-                subject = 'Report Assignment Change Alert'
-            if old_instance.status != instance.status and instance.status != None:
-                email = instance.assigned_to.email
-                mailing_list.append(email)
-                watchlist_emails = WatchlistedReport.objects.filter(report=instance).values_list('user__email', flat=True)
-                mailing_list.extend(watchlist_emails)
-                email_text = f"The following report was recently changed it's status to '{instance.status}'."
-                subject = 'Report Status Change Alert'
-            if old_instance.resolution != instance.resolution and instance.resolution != None:
-                email = instance.assigned_to.email
-                mailing_list.append(email)
-                watchlist_emails = WatchlistedReport.objects.filter(report=instance).values_list('user__email', flat=True)
-                mailing_list.extend(watchlist_emails)
-                email_text = f"The following report was recently changed it's resolution to '{instance.resolution}'"
-                subject = 'Report Resolution Change Alert'
+        if old_instance.assigned_to != instance.assigned_to:
+            if instance.assigned_to and instance.assigned_to.email:
+                mailing_list.append(instance.assigned_to.email)
+            email_text = f"A new report was assigned to you on {instance.domain.domain}."
+            subject = 'Report Assignment Change Alert'
+        if old_instance.status != instance.status and instance.status != None:
+            if instance.assigned_to and instance.assigned_to.email:
+                mailing_list.append(instance.assigned_to.email)
+            watchlist_emails = WatchlistedReport.objects.filter(report=instance).values_list('user__email', flat=True)
+            mailing_list.extend(watchlist_emails)
+            email_text = f"The following report was recently changed it's status to '{instance.status}'."
+            subject = 'Report Status Change Alert'
+        if old_instance.resolution != instance.resolution and instance.resolution != None:
+            if instance.assigned_to and instance.assigned_to.email:
+                mailing_list.append(instance.assigned_to.email)
+            watchlist_emails = WatchlistedReport.objects.filter(report=instance).values_list('user__email', flat=True)
+            mailing_list.extend(watchlist_emails)
+            email_text = f"The following report was recently changed it's resolution to '{instance.resolution}'"
+            subject = 'Report Resolution Change Alert'
+        if len(mailing_list) > 0:
             report_trigger_alert(instance, mailing_list, subject, email_text)
         
            
@@ -382,13 +382,13 @@ def sighting_save_handler(sender, instance, created, **kwargs):
     if created:
         mailing_list = []
         report = instance.report
-        if report.assigned_to:
-            email = report.assigned_to.email
-            mailing_list.append(email)
-            watchlist_emails = WatchlistedReport.objects.filter(report=report).values_list('user__email', flat=True)
-            mailing_list.extend(watchlist_emails)
-            email_text = f"A new sighting was recently added to the report {report.title}"
-            subject = 'New Sighting Alert'
+        if report.assigned_to and report.assigned_to.email:
+            mailing_list.append(report.assigned_to.email)
+        watchlist_emails = WatchlistedReport.objects.filter(report=report).values_list('user__email', flat=True)
+        mailing_list.extend(watchlist_emails)
+        email_text = f"A new sighting was recently added to the report {report.title}"
+        subject = 'New Sighting Alert'
+        if len(mailing_list) > 0:
             report_trigger_alert(report, mailing_list, subject, email_text)
 
 
@@ -414,7 +414,8 @@ def comment_save_handler(sender, instance, created, **kwargs):
             mailing_list.append(assigned_to.email)
         watchlist_emails = WatchlistedReport.objects.filter(report=instance.report).values_list('user__email', flat=True)
         mailing_list.extend(watchlist_emails)
-        new_comment_alert(instance, mailing_list)
+        if len(mailing_list) > 0:
+            new_comment_alert(instance, mailing_list)
 
 
 class FlaggedComment(models.Model):
