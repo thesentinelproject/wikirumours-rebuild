@@ -1,12 +1,11 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.password_validation import validate_password
 from django.forms import TextInput, EmailInput, PasswordInput
-
 from users.models import User
-
 from django.forms import ModelForm
 from django import forms
 from django.utils.translation import ugettext_lazy
+from captcha.fields import ReCaptchaField
 
 
 class LoginForm(forms.Form):
@@ -92,6 +91,8 @@ class SignUpForm(ModelForm):
             }
         ),
     )
+    captcha = ReCaptchaField()
+
 
     class Meta:
         model = User
@@ -102,6 +103,7 @@ class SignUpForm(ModelForm):
             "email",
             "phone_number",
             "password",
+            'captcha',
         )
 
 
@@ -116,6 +118,7 @@ class ForgotPasswordForm(forms.Form):
             }
         )
     )
+    captcha = ReCaptchaField()
 
 
 # class ResetPasswordForm(forms.Form):

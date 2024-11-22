@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
+    'captcha',
     "mapwidgets",
     "tailwind",
     "theme",
@@ -281,3 +282,7 @@ CACHES = {
 
 MAX_ALLOWED_HITS_PER_IP = 5 
 IP_HITS_TIMEOUT = 30  
+
+
+RECAPTCHA_PRIVATE_KEY = os.environ["SECRET_KEY"]
+RECAPTCHA_PUBLIC_KEY = os.environ["SITE_KEY"]

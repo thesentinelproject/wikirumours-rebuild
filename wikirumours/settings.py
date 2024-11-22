@@ -1,6 +1,6 @@
 from .base_settings import *
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "wikirumours.org",
@@ -18,6 +18,7 @@ ALLOWED_HOSTS = [
     "runtuwaanabad.org",
     "www.runtuwaanabad.org",
     "137.184.164.69",
+    "localhost"
 ]
 
 # MEDIA_URL = "/media/"

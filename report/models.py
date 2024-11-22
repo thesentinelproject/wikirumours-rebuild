@@ -275,26 +275,27 @@ def report_save_handler(sender, instance, **kwargs):
     if instance.pk:
         old_instance = sender.objects.get(pk=instance.pk)
         mailing_list = []
-        if old_instance.assigned_to != instance.assigned_to and instance.assigned_to != None:
-            email = instance.assigned_to.email
-            email_text = f"A new report was assigned to you on {instance.domain.domain}."
-            mailing_list.append(email)
-            subject = 'Report Assignment Change Alert'
-        if old_instance.status != instance.status and instance.status != None:
-            email = instance.assigned_to.email
-            mailing_list.append(email)
-            watchlist_emails = WatchlistedReport.objects.filter(report=instance).values_list('user__email', flat=True)
-            mailing_list.extend(watchlist_emails)
-            email_text = f"The following report was recently changed it's status to '{instance.status}'."
-            subject = 'Report Status Change Alert'
-        if old_instance.resolution != instance.resolution and instance.resolution != None:
-            email = instance.assigned_to.email
-            mailing_list.append(email)
-            watchlist_emails = WatchlistedReport.objects.filter(report=instance).values_list('user__email', flat=True)
-            mailing_list.extend(watchlist_emails)
-            email_text = f"The following report was recently changed it's resolution to '{instance.resolution}'"
-            subject = 'Report Resolution Change Alert'
-        report_trigger_alert(instance, mailing_list, subject, email_text)
+        if instance.assigned_to:
+            if old_instance.assigned_to != instance.assigned_to:
+                email = instance.assigned_to.email
+                email_text = f"A new report was assigned to you on {instance.domain.domain}."
+                mailing_list.append(email)
+                subject = 'Report Assignment Change Alert'
+            if old_instance.status != instance.status and instance.status != None:
+                email = instance.assigned_to.email
+                mailing_list.append(email)
+                watchlist_emails = WatchlistedReport.objects.filter(report=instance).values_list('user__email', flat=True)
+                mailing_list.extend(watchlist_emails)
+                email_text = f"The following report was recently changed it's status to '{instance.status}'."
+                subject = 'Report Status Change Alert'
+            if old_instance.resolution != instance.resolution and instance.resolution != None:
+                email = instance.assigned_to.email
+                mailing_list.append(email)
+                watchlist_emails = WatchlistedReport.objects.filter(report=instance).values_list('user__email', flat=True)
+                mailing_list.extend(watchlist_emails)
+                email_text = f"The following report was recently changed it's resolution to '{instance.resolution}'"
+                subject = 'Report Resolution Change Alert'
+            report_trigger_alert(instance, mailing_list, subject, email_text)
         
            
 
