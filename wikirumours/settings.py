@@ -1,6 +1,6 @@
 from .base_settings import *
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "wikirumours.org",
