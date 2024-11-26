@@ -148,7 +148,7 @@ def report_trigger_alert(report, mailing_list, subject, email_text):
         f'{domain_name.capitalize()} - {subject}',
         text_content,
         'support@wikirumours.org',
-        [mailing_list],
+        mailing_list,
         fail_silently=True,
         html_message=html_content
     )
@@ -168,7 +168,7 @@ def new_comment_alert(comment_obj, email_list):
         f'{domain_name.capitalize()} - New Comment Alert',
         text_content,
         'support@wikirumours.org',
-        [email_list],
+        email_list,
         fail_silently=True,
         html_message=html_content
     )
