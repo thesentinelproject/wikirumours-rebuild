@@ -18,6 +18,7 @@ ALLOWED_HOSTS = [
     "runtuwaanabad.org",
     "www.runtuwaanabad.org",
     "137.184.164.69",
+    "159.203.42.49",
 ]
 
 # MEDIA_URL = "/media/"
